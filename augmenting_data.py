@@ -36,7 +36,7 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 
 	#source and mic location
 	room.add_source([2,3.1,2],signal=audio_anechoic)
-	room.add_microphone(
+	room.add_microphone_array(
 		pra.MicrophoneArray(
             np.array([[2, 1.5, 2]]).T, 
             room.fs)
