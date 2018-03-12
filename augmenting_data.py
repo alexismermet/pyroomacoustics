@@ -22,12 +22,12 @@ from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
 
 FLAGS = None
 
-def modify_input_wav(input,room_dim,max_order,audio_dest):
+def modify_input_wav(wav,room_dim,max_order,audio_dest):
 
-	fs, audio_anechoic = wavfile.read('audio_file')
+	fs, audio_anechoic = wavfile.read(wav)
 
 	#create a room
-	room = pra.Room.shoeBox(
+	room = pra.shoeBox(
 		romm_dim,
 		absorption=0.2,
 		fs=fs,
@@ -35,7 +35,7 @@ def modify_input_wav(input,room_dim,max_order,audio_dest):
 		)
 
 	#source and mic location
-	room.add_source([2,3.1,2])
+	room.add_source([2,3.1,2],signal=audio_anechoic)
 	room.add_microphone(
 		pra.MicrophoneArray(
             np.array([[2, 1.5, 2]]).T, 
@@ -45,7 +45,7 @@ def modify_input_wav(input,room_dim,max_order,audio_dest):
     #source ism
     room.simulate()
 
-    audio_reverb = shoebox.mic_array.to_wav('audio_dest',norm=True ,bitdepth=np.int16)
+    audio_reverb = shoebox.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
 
 def  load_graph(f):
 	with tf.gfile.FastGFile(f,'rb') as graph:
@@ -99,7 +99,7 @@ if __name__ = '__main__':
 	parser.add_argument(
 		'--graph', type=str, default='', help='the model you want to use for identification.')
 	parser.add_argument(
-		'--labels', type=str, default='', help='the path to the fil containing the labels for your data.')
+		'--labels', type=str, default='', help='the path to the file containing the labels for your data.')
 	parser.add_argument(
 		'--dest_wav', type=str, default='', help='the place where you want the processed data to be saved before using it with the model.')
 	parser.add_argument(
