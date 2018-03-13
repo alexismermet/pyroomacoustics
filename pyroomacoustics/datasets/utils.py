@@ -29,15 +29,28 @@ def download_uncompress_tar_gz(url, path='.', chunk_size=None):
     if chunk_size is None:
         chunk_size = 4 * 1024 * 1024
 
+
+    # stream the data
+    r = requests.get(url, stream=True)
     with open(tmp_file, 'wb') as f:
-        with requests.get(url, stream=True) as r:
-            content_length = int(r.headers['content-length'])
-            count = 0
-            for chunk in r.iter_content(chunk_size=chunk_size):
-                f.write(chunk)
-                count += 1
-                print("%d bytes out of %d downloaded" % 
-                    (count*chunk_size, content_length))
+        content_length = int(r.headers['content-length'])
+        count = 0
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            f.write(chunk)
+            count += 1
+            print("%d bytes out of %d downloaded" % 
+                (count*chunk_size, content_length))
+    r.close()
+
+    # with open(tmp_file, 'wb') as f:
+    #     with requests.get(url, stream=True) as r:
+    #         content_length = int(r.headers['content-length'])
+    #         count = 0
+    #         for chunk in r.iter_content(chunk_size=chunk_size):
+    #             f.write(chunk)
+    #             count += 1
+    #             print("%d bytes out of %d downloaded" % 
+    #                 (count*chunk_size, content_length))
 
     # uncompress
     tar_file = 'tmp.tar'
