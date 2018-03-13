@@ -4,14 +4,14 @@
 #https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/speech_commands/label_wav.py
 # ==============================================================================
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pyroomacoustics as pra
 from scipy.io import wavfile
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import argparse
 import sys
@@ -38,14 +38,13 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 	room.add_source([2,3.1,2],signal=audio_anechoic)
 	room.add_microphone_array(
 		pra.MicrophoneArray(
-            np.array([[2, 1.5, 2]]).T, 
-            room.fs)
-        )
+	        np.array([[2, 1.5, 2]]).T, 
+	        room.fs)
+	    )
 
-    #source ism
-    room.simulate()
-
-    audio_reverb = shoebox.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
+	#source ism
+	room.simulate()
+	audio_reverb = shoebox.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
 
 def  load_graph(f):
 	with tf.gfile.FastGFile(f,'rb') as graph:
@@ -61,13 +60,13 @@ def run_graph(wav_data, labels, input_name, output_name, how_many_labels):
 		softmax_tensor = session.graph.get_tensor_by_name(output_name)
 		predictions, = session.run(softmax_tensor,{input_name: wav_data})
 
-		top_k = predictions.argsort()[-how_many_labels:][::-1]
-		for node_id in top_k:
-			human_string = labels[node_id]
-			score = predictions[node_id]
-            print('%s (score = %.5f)' % (human_string, score))
+	top_k = predictions.argsort()[-how_many_labels:][::-1]
+	for node_id in top_k:
+		human_string = labels[node_id]
+		score = predictions[node_id]
+		print('%s (score = %.5f)' % (human_string, score))
 
-        return 0
+	return 0
 
 def label_wav(wav,labels,graph,input_name,output_name, how_many_labels):
 	if not wav or not tf.gfile.Exists(wav):
@@ -92,7 +91,8 @@ def main(_):
 
 
 
-if __name__ = '__main__':
+if __name__ == '__main__':
+
 	parser = argparse.ArgumentParser()
 	parser.add_argument(
 		'--wav', type=str, default='', help='the audio file you want processed and then identified.')
@@ -112,5 +112,5 @@ if __name__ = '__main__':
 		'--output_name', type=str, default='labels_node', help='the name of the node outputting a prediction in the model.')
 	parser.add_argument(
 		'--how_many_labels', type=int, default=3, help='Number of result to show.')
-    FLAGS, unparsed = parser.parse_known_args()
-    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+	FLAGS, unparsed = parser.parse_known_args()
+	tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
