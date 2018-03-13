@@ -93,6 +93,8 @@ class GoogleSpeechCommands(Dataset):
 
         for word in tenserflow_sounds.keys():
 
+            h = 1
+
             # TODO build corpus using `Meta` object and `add_sample` function.
 
 
