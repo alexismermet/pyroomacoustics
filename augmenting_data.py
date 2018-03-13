@@ -27,8 +27,8 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 	fs, audio_anechoic = wavfile.read(wav)
 
 	#create a room
-	room = pra.shoeBox(
-		romm_dim,
+	room = pra.ShoeBox(
+		room_dim,
 		absorption=0.2,
 		fs=fs,
 		max_order = max_order
@@ -44,7 +44,7 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 
 	#source ism
 	room.simulate()
-	audio_reverb = shoebox.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
+	audio_reverb = room.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
 
 def  load_graph(f):
 	with tf.gfile.FastGFile(f,'rb') as graph:
@@ -85,8 +85,9 @@ def label_wav(wav,labels,graph,input_name,output_name, how_many_labels):
 	run_graph(wav_data,labels_list,input_name,output_name,how_many_labels)
 
 def main(_):
+	print(FLAGS.room_dim)
 	modify_input_wav(FLAGS.wav,FLAGS.room_dim,FLAGS.max_order,FLAGS.dest_wav)
-	label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.input_name, FLAGS.output_name, FLAGS.how_many_labels)
+	# label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.input_name, FLAGS.output_name, FLAGS.how_many_labels)
 
 
 
@@ -102,10 +103,11 @@ if __name__ == '__main__':
 		'--labels', type=str, default='', help='the path to the file containing the labels for your data.')
 	parser.add_argument(
 		'--dest_wav', type=str, default='', help='the place where you want the processed data to be saved before using it with the model.')
+	# parser.add_argument(
+	# 	'--dim', '--room_dim', action='append',default=[5,4,6], help='give the different coordinates foe a 3D shoebox room.')
+	parser.add_argument('--room_dim', nargs='+', type=int, default=[5,4,6], help='give the different coordinates for a 3D shoebox room.')
 	parser.add_argument(
-		'--dim', '--room_dim', action='append',default=[5,4,6], help='give the different coordinates foe a 3D shoebox room.')
-	parser.add_argument(
-		'--max_order', type=int, default=16, help='the number of reflection you want to do.')
+		'--max_order', type=int, default=3, help='the number of reflection you want to do.')
 	parser.add_argument(
 		'--input_name', type=str, default='wav_data_node', help='the name of the WAV data input node in the model.')
 	parser.add_argument(
