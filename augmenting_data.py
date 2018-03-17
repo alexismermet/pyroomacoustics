@@ -25,13 +25,14 @@ FLAGS = None
 """
 Example of how to run:
 
-python augmenting_data.py --wav ffd2ba2f_nohash_4.wav --dest_wav output.wav --labels conv_labels.txt --graph my_frozen_graph.pb --room_dim 4 5 6
+python augmenting_data.py --wav ffd2ba2f_nohash_4.wav --noise white_noise.wav --dest_wav output.wav --labels conv_labels.txt --graph my_frozen_graph.pb --room_dim 4 5 6
 
 """
 
-def modify_input_wav(wav,room_dim,max_order,audio_dest):
+def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
 
 	fs, audio_anechoic = wavfile.read(wav)
+	fs, noise_anechoic = wavfile.read(noise)
 
 	#create a room
 	room = pra.ShoeBox(
@@ -43,6 +44,7 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 
 	#source and mic location
 	room.add_source([2,3.1,2],signal=audio_anechoic)
+	room.add_source([4,2,1.5], signal=noise_anechoic)
 	room.add_microphone_array(
 		pra.MicrophoneArray(
 	        np.array([[2, 1.5, 2]]).T, 
@@ -52,6 +54,7 @@ def modify_input_wav(wav,room_dim,max_order,audio_dest):
 	#source ism
 	room.simulate()
 	audio_reverb = room.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
+	return 20*np.log10(np.linalg.norm(audio_anechoic)/np.linalg.norm(noise_anechoic))
 
 
 def  load_graph(f):
@@ -75,6 +78,7 @@ def run_graph(wav_data, labels, how_many_labels):
 		human_string = labels[node_id]
 		score = predictions[node_id]
 		print('%s (score = %.5f)' % (human_string, score))
+	return score
 
 
 def label_wav(wav,labels,graph,how_many_labels):
@@ -96,8 +100,11 @@ def label_wav(wav,labels,graph,how_many_labels):
 
 
 def main(_):
-	modify_input_wav(FLAGS.wav,FLAGS.room_dim,FLAGS.max_order,FLAGS.dest_wav)
-	label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
+	x = modify_input_wav(FLAGS.wav,FLAGS.noise,FLAGS.room_dim,FLAGS.max_order,FLAGS.dest_wav)
+	y = label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
+
+	plt.plot(x,y)
+	plt.title('SNR against percentage of confidence')
 
 
 
@@ -107,6 +114,8 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument(
 		'--wav', type=str, default='', help='the audio file you want processed and then identified.')
+	parser.add_argument(
+		'--noise_wav', type=str, default='', help='the noise you want to be added to your audio file to be processed')
 	parser.add_argument(
 		'--graph', type=str, default='', help='the model you want to use for identification.')
 	parser.add_argument(
