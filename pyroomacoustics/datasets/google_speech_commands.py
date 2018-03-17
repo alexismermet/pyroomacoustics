@@ -2,7 +2,7 @@
 TODO : info about dataset
 '''
 
-import os
+import os, glob
 import numpy as np
 from scipy.io import wavfile
 
@@ -10,7 +10,7 @@ from .utils import download_uncompress_tar_gz
 from .base import Meta, AudioSample, Dataset
 
 
-tenserflow_sounds = {
+tensorflow_sounds = {
     'zero' : { 'speech' : 1},
     'yes': {'speech' : 1},
     'wow': {'speech' : 1},
@@ -26,7 +26,7 @@ tenserflow_sounds = {
     'on' : {'speech' : 1},
     'off' : {'speech' : 1},
     'no' : {'speech' : 1},
-    'nibe' : {'speech' : 1},
+    'nine' : {'speech' : 1},
     'marvin' : {'speech' : 1},
     'left' : {'speech' : 1},
     'house' : {'speech' : 1},
@@ -46,7 +46,7 @@ tenserflow_sounds = {
 
 url = "http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz"
 
-tenserflow_sounds_data = {}
+tensorflow_sounds_data = {}
 
 
 class GoogleSpeechCommands(Dataset):
@@ -67,38 +67,7 @@ class GoogleSpeechCommands(Dataset):
 
         # initialize
         Dataset.__init__(self)
-        self.size_by_samples = {
-            'zero' : 0,
-            'yes': 0,
-            'wow': 0,
-            'up' : 0,
-            'two' : 0,
-            'tree' : 0,
-            'stop' : 0,
-            'six' : 0,
-            'sheila' : 0,
-            'seven' : 0,
-            'right' : 0,
-            'one' : 0,
-            'on' : 0,
-            'off' : 0,
-            'no' : 0,
-            'nibe' : 0,
-            'marvin' : 0,
-            'left' : 0,
-            'house' : 0,
-            'happy' : 0,
-            'go' : 0,
-            'four' : 0,
-            'five' : 0,
-            'eight' : 0,
-            'down' : 0,
-            'dog' : 0,
-            'cat' : 0,
-            'bird' : 0,
-            'bed' : 0,
-            '_background_noise_' : 0,
-            } 
+        self.size_by_samples = {}
 
         # default base directory is the current one
         self.basedir = basedir
@@ -125,40 +94,44 @@ class GoogleSpeechCommands(Dataset):
         Build the corpus with some filters (speech or not speech)
         '''
 
-        for word in tenserflow_sounds.keys():
+        # subdirectories are the different words
+        self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-            with open(os.path.join(self.basedir,'testing_list.txt'),'r') as f:
-                if word is '_background_noise_':
-                    speech = 0
+        for idx, word in enumerate(self.classes):
+
+            if word == '_background_noise_':
+                speech = 0
+            else:
+                speech = 1
+
+            word_path = self.subdirs[idx]
+
+            self.size_by_samples[word] = 0
+            for filename in glob.glob(os.path.join(word_path, '*.wav')):
+
+                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+
+                # could also add score of original model for each word?
+                if speech:
+                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
                 else:
-                    speech = 1
+                    noise_type = os.path.basename(filename).split(".")[0]
+                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
 
-
-                for line in f.readlines():
-                    l = line.split('/')
-                    sound = l[0]
-                    file = l[1]
-                    path = os.path.join(self.basedir,sound + '/' + file)
-
-                    if sound not in tenserflow_sounds_data:
-                        tenserflow_sounds_data[sound] ={
-                            'speech' = speech
-                            'paths' = np.array([path])
-                        }
-                    else:
-                        np.append(tenserflow_sounds_data[sound]['paths'],[path])
-
-
-        for word, info in tenserflow_sounds_data.items():
-            for path in info['paths']:
-                meta = Meta(speech = info['speech'], word = word) 
+                # not sure about this command
                 if meta.match(**kwargs):
-                    self.add_sample(GoogleSample(path, **meta.as_dict()))
-                    self.size_by_samples[word] += 1
+                    self.add_sample(GoogleSample(filename, **meta.as_dict()))
 
-    def subset(self,size):
+                self.size_by_samples[word] += 1
+
+
+    def subset(self, size=10):
+        '''
+        TODO
+        '''
         select_list = []
-        for word in tenserflow_sounds:
+        for word in tensorflow_sounds:
             r = filter(self,'word == word')
             for sample in r.samples[:size]:
                 select_list.append(sample)
@@ -198,7 +171,12 @@ class GoogleSample(AudioSample):
     def __str__(self):
         '''string representation'''
 
-        template = '{word}: ''{speech}'''
+        meta_dict = self.meta.as_dict()
+        # if meta_dict['speech']:
+        if self.meta.speech:
+            template = 'speech: ''{speech}''; word: ''{word}''; file_loc: ''{file_loc}'''
+        else:
+            template = 'speech: ''{speech}''; noise type: ''{noise_type}''; file_loc: ''{file_loc}'''
         s = template.format(**self.meta.as_dict())
         return s
 
@@ -211,4 +189,8 @@ class GoogleSample(AudioSample):
             print('Warning: matplotlib is required for plotting')
             return
         AudioSample.plot(self,**kwargs)
-        plt.title(self.meta.sound)
+        if self.meta.speech:
+            plt.title(self.meta.file_loc)
+        else:
+            plt.title(self.meta.file_loc)
+
