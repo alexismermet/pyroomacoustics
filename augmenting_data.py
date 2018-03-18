@@ -96,15 +96,16 @@ def label_wav(wav,labels,graph,how_many_labels):
 	with open(wav,'rb') as wav_file:
 		wav_data = wav_file.read()
 
-	run_graph(wav_data,labels_list,how_many_labels)
+	return run_graph(wav_data,labels_list,how_many_labels)
 
 
 def main(_):
 	x = modify_input_wav(FLAGS.wav,FLAGS.noise,FLAGS.room_dim,FLAGS.max_order,FLAGS.dest_wav)
 	y = label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
 
-	plt.plot(x,y)
+	plt.plot(x,y,'ro')
 	plt.title('SNR against percentage of confidence')
+	plt.show()
 
 
 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 	parser.add_argument(
 		'--wav', type=str, default='', help='the audio file you want processed and then identified.')
 	parser.add_argument(
-		'--noise_wav', type=str, default='', help='the noise you want to be added to your audio file to be processed')
+		'--noise', type=str, default='', help='the noise you want to be added to your audio file to be processed')
 	parser.add_argument(
 		'--graph', type=str, default='', help='the model you want to use for identification.')
 	parser.add_argument(

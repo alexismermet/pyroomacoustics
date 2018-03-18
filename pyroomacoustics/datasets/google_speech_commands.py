@@ -4,6 +4,7 @@ TODO : info about dataset
 
 import os, glob
 import numpy as np
+from sklearn.model_selection import train_test_split
 from scipy.io import wavfile
 
 from .utils import download_uncompress_tar_gz
@@ -45,8 +46,6 @@ tensorflow_sounds = {
 
 
 url = "http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz"
-
-tensorflow_sounds_data = {}
 
 
 class GoogleSpeechCommands(Dataset):
@@ -126,16 +125,51 @@ class GoogleSpeechCommands(Dataset):
                 self.size_by_samples[word] += 1
 
 
-    def subset(self, size=10):
+    def subset(self, n=10,trainTestSplit = False):
         '''
-        TODO
+        Build new corpus which are subset of a given size of the original one.
+        The elements composing these new_corpus are taken randomly from the original corpus.
+
+        We can use these functions to create new training and testing set form the full dataset.
+
+        RETURN:
+        -One new sample if trainTestSplit is false
+        -Two new samples if trainTestSplit is true
         '''
-        select_list = []
-        for word in tensorflow_sounds:
-            r = filter(self,'word == word')
-            for sample in r.samples[:size]:
-                select_list.append(sample)
-        r.build_corpus(self,**kwargs)
+        indices = {}
+
+        if(trainTestSplit):
+            train_corpus = GoogleSpeechCommands()
+            test_corpus = GoogleSpeechCommands()
+            train_split = []
+        else:
+            new_corpus = GoogleSpeechCommands()
+
+        
+        for word in enumerate(self.classes):
+            indices[word] = np.random.randint(0,self.size_by_samples[word]-1,n)
+
+        for word in enumerate(self.classes):
+            for index in indices[word]:
+                if(trainTestSplit):
+                    train_split.append(__getitem__(self,index))
+                else:
+                    new_corpus.add_sample(__getitem__(self,index))
+
+        if(trainTestSplit):
+            train,test = train_test_split(train_split,0.2,0.8)
+            for sample in train:
+                train_corpus.add_sample(sample)
+            for sample in test:
+                test_corpus.add_sample(sample)
+            return (train_corpus,test_corpus)
+        else:
+            return new_corpus
+
+
+
+
+
 
 
         
