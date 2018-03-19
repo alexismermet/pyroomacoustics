@@ -1,5 +1,7 @@
 '''
-TODO : info about dataset
+The speech commands dataset consists of 65,000 WAVE audio files of people saying thirty different words.
+This data was collected by Google and released under a CC BY license.
+You can help omprove it by contributing with your own voice. The archive is over 1GB
 '''
 
 import os, glob

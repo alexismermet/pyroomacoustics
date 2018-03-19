@@ -33,6 +33,9 @@ def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
 
 	fs, audio_anechoic = wavfile.read(wav)
 	fs, noise_anechoic = wavfile.read(noise)
+	#take care of the volume of the noise such that it is not always at full power which is very rare
+	#in reality
+	noise_volume = np.random.uniform(0.0,1.0)
 
 	#create a room
 	room = pra.ShoeBox(
@@ -44,7 +47,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
 
 	#source and mic location
 	room.add_source([2,3.1,2],signal=audio_anechoic)
-	room.add_source([4,2,1.5], signal=noise_anechoic)
+	room.add_source([4,2,1.5], signal=noise_volume*noise_anechoic)
 	room.add_microphone_array(
 		pra.MicrophoneArray(
 	        np.array([[2, 1.5, 2]]).T, 
