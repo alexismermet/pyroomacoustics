@@ -64,7 +64,8 @@ class GoogleSpeechCommands(Dataset):
         Can be 'female' or 'male'
     '''
 
-    def __init__(self, basedir=None, download=False, build=True, **kwargs):
+    def __init__(self, basedir=None, subset=None, download=False, build=True, 
+        seed=13, **kwargs):
 
         # initialize
         Dataset.__init__(self)
@@ -87,13 +88,27 @@ class GoogleSpeechCommands(Dataset):
 
 
         if build:
-            self.build_corpus(**kwargs)
+            self.build_corpus(subset, seed, **kwargs)
 
 
-    def build_corpus(self, **kwargs):
+    def build_corpus(self, subset=None, seed=13, **kwargs):
         '''
         Build the corpus with some filters (speech or not speech)
         '''
+
+        # TODO
+        if subset is None:
+            # build whole dataset like already done
+            h = 1
+        else:
+            # make sure subset is an integer and take `subset` values from each class
+            # and all the background noise
+            
+            # something like this to get all the files for a particular class
+            files = glob.glob('google_speech_commands/seven/*.wav')
+            n_files = len(files)
+            # same as in subset below
+            # then loop through subset values
 
         # subdirectories are the different words
         self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
@@ -127,7 +142,7 @@ class GoogleSpeechCommands(Dataset):
                 self.size_by_samples[word] += 1
 
 
-    def subset(self, n=10,trainTestSplit = False):
+    def subset(self, n=10, trainTestSplit = False, seed=13):
         '''
         Build new corpus which are subset of a given size of the original one.
         The elements composing these new_corpus are taken randomly from the original corpus.
@@ -138,6 +153,19 @@ class GoogleSpeechCommands(Dataset):
         -One new sample if trainTestSplit is false
         -Two new samples if trainTestSplit is true
         '''
+
+
+        # DRAWING RANDOM VALUES --> TODO
+        n_samples = 20
+        subset_len = 5
+        idx = np.arange(n_samples)
+        np.random.seed(seed) # BEFORE SHUFFLING SET SEED, BEFORE EACH TIME YOU DO SHUFFLE!
+        np.random.shuffle(idx)
+        subset_idx = idx[:subset_len]
+        ###
+
+        
+
         indices = {}
 
         if(trainTestSplit):
