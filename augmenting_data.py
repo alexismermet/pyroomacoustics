@@ -56,7 +56,40 @@ def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
 
 	#source ism
 	room.simulate()
-	audio_reverb = room.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
+	room.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
+	audio_reverb = room.mic_array.signals
+
+
+	"""
+	1) new input to function (array of SNR values) --> `snr_vals` (you can create it with np.arange)
+	2) simulate signal in room --> room_signal.mic_array.signals
+	3) simulate noise in room --> room_noise.mic_array.signals
+	4) MAKE SURE THAT LENGTH OF `room_noise.mic_array.signals` IS GREATER THAN
+	   OR EQUAL TO LENGTH OF `room_signal.mic_array.signals`
+	   - this can be probably be done by setting the `max_order` of the room 
+	   	 simulating the noise larger than the `max_order` of the room 
+	   	 simulating the signal/speech
+	5) truncate `room_noise.mic_array.signals` so that it is same length as
+       `room_signal.mic_array.signals`
+    6) Normalize noise:
+		for each microphone m:
+		 	noise_normalized[m,:] = room_noise.mic_array.signals[m,:] / np.linalg.norm(room_noise.mic_array.signals[m,:])
+    6) for each snr in snr_vals:
+		 initialize array for `noisy signal`
+		 for each microphone m:
+		 	noise_std = np.linalg.norm(room_signal.mic_array.signals[m,:]) / (10**(snr/20.))
+		 	noise = noise_normalized[m,:]*noise_std
+		 	noisy_signal[m,:] = room_signal.mic_array.signals[m,:] + noise
+		 save `noisy_signal` as 'reverb_output_snr_level'
+	7) Step 6 should create a WAV file (using scipy.io.wavfile.write) for each 
+	   snr level in `snr_vals`. Then you can compute the classification value 
+	   for each of those files.
+    8) plot `snr_vals` against classification value
+
+	"""
+
+
+
 	return 20*np.log10(np.linalg.norm(audio_anechoic)/np.linalg.norm(noise_anechoic))
 
 
