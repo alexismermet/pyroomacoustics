@@ -25,39 +25,70 @@ FLAGS = None
 """
 Example of how to run:
 
-python augmenting_data.py --wav ffd2ba2f_nohash_4.wav --noise white_noise.wav --dest_wav output.wav --labels conv_labels.txt --graph my_frozen_graph.pb --room_dim 4 5 6
+python augmenting_data.py --wav ffd2ba2f_nohash_4.wav --noise white_noise.wav --dest_wav output --labels conv_labels.txt --graph my_frozen_graph.pb --room_dim 4 5 6
 
 """
 
-def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
+def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 
-	fs, audio_anechoic = wavfile.read(wav)
-	fs, noise_anechoic = wavfile.read(noise)
-	#take care of the volume of the noise such that it is not always at full power which is very rare
-	#in reality
-	noise_volume = np.random.uniform(0.0,1.0)
+	fs_s, audio_anechoic = wavfile.read(wav)
+	fs_n, noise_anechoic = wavfile.read(noise)
+	
+	#Create a room for the signal
+	room_signal= pra.ShoeBox(
+		room_dim,
+		absorption = 0.2,
+		fs = fs_s,
+		max_order = max_order)
 
-	#create a room
-	room = pra.ShoeBox(
+	#rCeate a room for the noise
+	room_noise = pra.ShoeBox(
 		room_dim,
 		absorption=0.2,
-		fs=fs,
-		max_order = max_order
-		)
+		fs=fs_n,
+		max_order = max_order + 1)
 
-	#source and mic location
-	room.add_source([2,3.1,2],signal=audio_anechoic)
-	room.add_source([4,2,1.5], signal=noise_volume*noise_anechoic)
-	room.add_microphone_array(
+	#source of the signal and of the noise in their respectiv boxes
+	room_signal.add_source([2,3.1,2],signal=audio_anechoic)
+	room_noise.add_source([4,2,1.5], signal=noise_anechoic)
+
+	#we add a microphone at the same position in both of the boxes
+	room_signal.add_microphone_array(
 		pra.MicrophoneArray(
 	        np.array([[2, 1.5, 2]]).T, 
-	        room.fs)
+	        room_signal.fs)
+	    )
+	room_noise.add_microphone_array(
+		pra.MicrophoneArray(
+	        np.array([[2, 1.5, 2]]).T, 
+	        room_noise.fs)
 	    )
 
-	#source ism
-	room.simulate()
-	room.mic_array.to_wav(audio_dest,norm=True ,bitdepth=np.int16)
-	audio_reverb = room.mic_array.signals
+	#simulate both rooms
+	room_signal.simulate()
+	room_noise.simulate()
+
+	#take the mic_array.signals from each room
+	audio_reverb = room_signal.mic_array.signals
+	noise_reverb = room_noise.mic_array.signals
+
+	#verify the size of the two arrays such that we can continue working on the signal
+	if(len(noise_reverb) < len(audio_reverb)):
+		raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
+
+	#normalize the noise
+	print(np.shape(audio_reverb))
+	noise_reverb = noise_reverb[:,:np.shape(audio_reverb)[1]]
+	print(np.shape(noise_reverb))
+	noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
+
+	noisy_signal = {}
+
+	for snr in snr_vals:
+		noise_std = np.linalg.norm(audio_reverb)/(10**(snr/20.))
+		final_noise = noise_normalized*noise_std
+		noisy_signal[snr] = audio_reverb + final_noise
+	return noisy_signal
 
 
 	"""
@@ -87,10 +118,6 @@ def modify_input_wav(wav,noise,room_dim,max_order,audio_dest):
     8) plot `snr_vals` against classification value
 
 	"""
-
-
-
-	return 20*np.log10(np.linalg.norm(audio_anechoic)/np.linalg.norm(noise_anechoic))
 
 
 def  load_graph(f):
@@ -136,10 +163,21 @@ def label_wav(wav,labels,graph,how_many_labels):
 
 
 def main(_):
-	x = modify_input_wav(FLAGS.wav,FLAGS.noise,FLAGS.room_dim,FLAGS.max_order,FLAGS.dest_wav)
-	y = label_wav(FLAGS.dest_wav, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
+	snr_vals = np.arange(100,-10,-10)
+	fs, x = wavfile.read(FLAGS.wav)
+	
+	noisy_signal = modify_input_wav(FLAGS.wav,FLAGS.noise,FLAGS.room_dim,FLAGS.max_order,snr_vals)
+	
+	i = 0
+	correctness = np.empty(len(snr_vals))
+	for snr in snr_vals:
+		dest = FLAGS.dest_wav + str(snr) + '.wav' 
+		noisy =noisy_signal[snr]
+		print(noisy)
+		wavfile.write(dest,fs,noisy[0])
+		correctness[i] = label_wav(dest, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
 
-	plt.plot(x,y,'ro')
+	plt.plot(snr_vals,correctness)
 	plt.title('SNR against percentage of confidence')
 	plt.show()
 
