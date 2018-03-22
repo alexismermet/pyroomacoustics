@@ -77,9 +77,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 		raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
 
 	#normalize the noise
-	print(np.shape(audio_reverb))
 	noise_reverb = noise_reverb[:,:np.shape(audio_reverb)[1]]
-	print(np.shape(noise_reverb))
 	noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
 	noisy_signal = {}
