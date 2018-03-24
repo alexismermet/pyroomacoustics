@@ -156,18 +156,14 @@ class GoogleSpeechCommands(Dataset):
 	                else:
 	                    noise_type = os.path.basename(filename).split(".")[0]
 	                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
-
-	                # not sure about this command
-					if meta.match(**kwargs):
-						if(word == '_background_noise_'):
-							self.add_sample(GoogleSample(filename, **meta.as_dict()))
-						else:
-							if(self.size_by_samples[word] < subset):
-								self.add_sample(GoogleSample(filename, **meta.as_dict()))
-
-	                self.size_by_samples[word] += 1
-
-
+	                if meta.match(**kwargs):
+	                	if word == '_background_noise_':
+	                		self.add_sample(GoogleSample(filename, **meta.as_dict()))
+	                		self.size_by_samples[word] += 1
+                		else:
+                			if(self.size_by_samples[word] < subset):
+                				self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                				self.size_by_samples[word] += 1
 
             # make sure subset is an integer and take `subset` values from each class
             # and all the background noise
@@ -194,12 +190,12 @@ class GoogleSpeechCommands(Dataset):
 
 
         # DRAWING RANDOM VALUES --> TODO
-        n_samples = 20
-        subset_len = 5
-        idx = np.arange(n_samples)
-        np.random.seed(seed) # BEFORE SHUFFLING SET SEED, BEFORE EACH TIME YOU DO SHUFFLE!
-        np.random.shuffle(idx)
-        subset_idx = idx[:subset_len]
+        #n_samples = 20
+        #subset_len = 5
+        #idx = np.arange(n_samples)
+        #np.random.seed(seed) # BEFORE SHUFFLING SET SEED, BEFORE EACH TIME YOU DO SHUFFLE!
+        #np.random.shuffle(idx)
+        #subset_idx = idx[:subset_len]
         ###
 
         
@@ -213,9 +209,11 @@ class GoogleSpeechCommands(Dataset):
         else:
             new_corpus = GoogleSpeechCommands()
 
-        
         for word in enumerate(self.classes):
-            indices[word] = np.random.randint(0,self.size_by_samples[word]-1,n)
+        	idx = np.arange(self.size_by_samples[word])
+        	np.random.seed(seed)
+        	np.random.shuffle(idx)
+        	indices[word] = idx[:n]
 
         for word in enumerate(self.classes):
             for index in indices[word]:

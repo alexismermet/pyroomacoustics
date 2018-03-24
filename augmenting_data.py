@@ -46,7 +46,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 		room_dim,
 		absorption=0.2,
 		fs=fs_n,
-		max_order = max_order + 1)
+		max_order = max_order)
 
 	#source of the signal and of the noise in their respectiv boxes
 	room_signal.add_source([2,3.1,2],signal=audio_anechoic)
@@ -71,21 +71,22 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 	#take the mic_array.signals from each room
 	audio_reverb = room_signal.mic_array.signals
 	noise_reverb = room_noise.mic_array.signals
+	print(audio_reverb.dtype)
 
 	#verify the size of the two arrays such that we can continue working on the signal
-	if(len(noise_reverb) < len(audio_reverb)):
+	if(len(noise_reverb[0]) < len(audio_reverb[0])):
 		raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
 
 	#normalize the noise
-	noise_reverb = noise_reverb[:,:np.shape(audio_reverb)[1]]
+	noise_reverb = noise_reverb[:,:len(audio_reverb[0])]
 	noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
 	noisy_signal = {}
 
 	for snr in snr_vals:
-		noise_std = np.linalg.norm(audio_reverb)/(10**(snr/20.))
+		noise_std = np.linalg.norm(audio_reverb[0])/(10**(snr/20.))
 		final_noise = noise_normalized*noise_std
-		noisy_signal[snr] = audio_reverb + final_noise
+		noisy_signal[snr] = audio_reverb[0] + final_noise
 	return noisy_signal
 
 
@@ -169,11 +170,13 @@ def main(_):
 	i = 0
 	correctness = np.empty(len(snr_vals))
 	for snr in snr_vals:
+		input_type = noisy_signal[snr].dtype
+		fact = max(np.finfo(input_type).max,abs(np.finfo(input_type).min))
 		dest = FLAGS.dest_wav + str(snr) + '.wav' 
-		noisy =noisy_signal[snr]
-		print(noisy)
+		noisy = (noisy_signal[snr]/fact).astype(np.float32)
 		wavfile.write(dest,fs,noisy[0])
 		correctness[i] = label_wav(dest, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
+		i +=1
 
 	plt.plot(snr_vals,correctness)
 	plt.title('SNR against percentage of confidence')
