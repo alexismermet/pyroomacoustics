@@ -96,76 +96,76 @@ class GoogleSpeechCommands(Dataset):
         Build the corpus with some filters (speech or not speech)
         '''
 
-        # TODO
-        if subset is None:
+        # # TODO
+        # if subset is None:
 
-	        self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-	        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+        self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-	        for idx, word in enumerate(self.classes):
+        for idx, word in enumerate(self.classes):
 
-	            if word == '_background_noise_':
-	                speech = 0
-	            else:
-	                speech = 1
+            if word == '_background_noise_':
+                speech = 0
+            else:
+                speech = 1
 
-	            word_path = self.subdirs[idx]
+            word_path = self.subdirs[idx]
 
-	            self.size_by_samples[word] = 0
-	            for filename in glob.glob(os.path.join(word_path, '*.wav')):
+            self.size_by_samples[word] = 0
+            for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
-	                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
-	                # could also add score of original model for each word?
-	                if speech:
-	                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
-	                else:
-	                    noise_type = os.path.basename(filename).split(".")[0]
-	                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                # could also add score of original model for each word?
+                if speech:
+                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                else:
+                    noise_type = os.path.basename(filename).split(".")[0]
+                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
 
-	                # not sure about this command
-	                if meta.match(**kwargs):
-	                    self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                # not sure about this command
+                if meta.match(**kwargs):
+                    self.add_sample(GoogleSample(filename, **meta.as_dict()))
 
-	                self.size_by_samples[word] += 1
-        else:
+                self.size_by_samples[word] += 1
+        # else:
 
-        	if not isinstance(subset,int):
-        		raise ValueError("the subset value has to be the size of the subset you want per words.")
+        # 	if not isinstance(subset,int):
+        # 		raise ValueError("the subset value has to be the size of the subset you want per words.")
 
-        	self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-	        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+        # 	self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+	       #  self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-	        for idx, word in enumerate(self.classes):
+	       #  for idx, word in enumerate(self.classes):
 
-	            if word == '_background_noise_':
-	                speech = 0
-	            else:
-	                speech = 1
+	       #      if word == '_background_noise_':
+	       #          speech = 0
+	       #      else:
+	       #          speech = 1
 
-	            word_path = self.subdirs[idx]
+	       #      word_path = self.subdirs[idx]
 
-	            self.size_by_samples[word] = 0
-	            for filename in glob.glob(os.path.join(word_path, '*.wav')):
+	       #      self.size_by_samples[word] = 0
+	       #      for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
-	                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+	       #          file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
-	                # could also add score of original model for each word?
-	                if speech:
-	                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
-	                else:
-	                    noise_type = os.path.basename(filename).split(".")[0]
-	                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+	       #          # could also add score of original model for each word?
+	       #          if speech:
+	       #              meta = Meta(word=word, speech=speech, file_loc=file_loc)
+	       #          else:
+	       #              noise_type = os.path.basename(filename).split(".")[0]
+	       #              meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
 
-	                # not sure about this command
-					if meta.match(**kwargs):
-						if(word == '_background_noise_'):
-							self.add_sample(GoogleSample(filename, **meta.as_dict()))
-						else:
-							if(self.size_by_samples[word] < subset):
-								self.add_sample(GoogleSample(filename, **meta.as_dict()))
+        #             # not sure about this command
+        #             if meta.match(**kwargs):
+        #                 if (word == '_background_noise_'):
+        #                 	self.add_sample(GoogleSample(filename, **meta.as_dict()))
+        #                 else:
+        #                 	if(self.size_by_samples[word] < subset):
+        #                 		self.add_sample(GoogleSample(filename, **meta.as_dict()))
 
-	                self.size_by_samples[word] += 1
+        #             self.size_by_samples[word] += 1
 
 
 
