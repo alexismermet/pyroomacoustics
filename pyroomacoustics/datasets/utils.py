@@ -1,5 +1,7 @@
-import os, tarfile, bz2, requests, gzip
-
+import os, tarfile, bz2, requests, gzip 
+from scipy.io import wavfile
+import numpy as np
+import pyroomacoustics as pra
 
 def download_uncompress_tar_bz2(url, path='.'):
 
@@ -59,3 +61,66 @@ def download_uncompress_tar_gz(url, path='.', chunk_size=None):
     os.unlink(tar_file)
 
 
+
+def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
+
+    '''
+    for mono
+    '''
+
+    fs_s, audio_anechoic = wavfile.read(wav)
+    fs_n, noise_anechoic = wavfile.read(noise)
+    
+    #Create a room for the signal
+    room_signal= pra.ShoeBox(
+        room_dim,
+        absorption = 0.2,
+        fs = fs_s,
+        max_order = max_order)
+
+    #rCeate a room for the noise
+    room_noise = pra.ShoeBox(
+        room_dim,
+        absorption=0.2,
+        fs=fs_n,
+        max_order = max_order)
+
+    #source of the signal and of the noise in their respectiv boxes
+    room_signal.add_source([2,3.1,2],signal=audio_anechoic)
+    room_noise.add_source([4,2,1.5], signal=noise_anechoic)
+
+    #we add a microphone at the same position in both of the boxes
+    room_signal.add_microphone_array(
+        pra.MicrophoneArray(
+            np.array([[2, 1.5, 2]]).T, 
+            room_signal.fs)
+        )
+    room_noise.add_microphone_array(
+        pra.MicrophoneArray(
+            np.array([[2, 1.5, 2]]).T, 
+            room_noise.fs)
+        )
+
+    #simulate both rooms
+    room_signal.simulate()
+    room_noise.simulate()
+
+    #take the mic_array.signals from each room
+    audio_reverb = room_signal.mic_array.signals
+    noise_reverb = room_noise.mic_array.signals
+
+    #verify the size of the two arrays such that we can continue working on the signal
+    if(len(noise_reverb[0]) < len(audio_reverb[0])):
+        raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
+
+    #normalize the noise
+    noise_reverb = noise_reverb[:,:len(audio_reverb[0])][0]
+    noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
+
+    noisy_signal = np.zeros((len(snr_vals),audio_reverb.shape[0], audio_reverb.shape[1]))
+
+    for i,snr in enumerate(snr_vals):
+        noise_std = np.linalg.norm(audio_reverb[0])/(10**(snr/20.))
+        final_noise = noise_normalized*noise_std
+        noisy_signal[i,:,:] = audio_reverb[0] + final_noise
+    return noisy_signal

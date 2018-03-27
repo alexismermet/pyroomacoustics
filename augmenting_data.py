@@ -140,7 +140,8 @@ def run_graph(wav_data, labels, how_many_labels):
 		human_string = labels[node_id]
 		score = predictions[node_id]
 		print('%s (score = %.5f)' % (human_string, score))
-	return score
+	return predictions[2]
+
 
 
 def label_wav(wav,labels,graph,how_many_labels):
