@@ -33,6 +33,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 
 	fs_s, audio_anechoic = wavfile.read(wav)
 	fs_n, noise_anechoic = wavfile.read(noise)
+
 	
 	#Create a room for the signal
 	room_signal= pra.ShoeBox(
@@ -71,14 +72,13 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 	#take the mic_array.signals from each room
 	audio_reverb = room_signal.mic_array.signals
 	noise_reverb = room_noise.mic_array.signals
-	print(audio_reverb.dtype)
 
 	#verify the size of the two arrays such that we can continue working on the signal
 	if(len(noise_reverb[0]) < len(audio_reverb[0])):
 		raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
 
 	#normalize the noise
-	noise_reverb = noise_reverb[:,:len(audio_reverb[0])]
+	noise_reverb = noise_reverb[:,:len(audio_reverb[0])][0]
 	noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
 	noisy_signal = {}
@@ -170,11 +170,9 @@ def main(_):
 	i = 0
 	correctness = np.empty(len(snr_vals))
 	for snr in snr_vals:
-		input_type = noisy_signal[snr].dtype
-		fact = max(np.finfo(input_type).max,abs(np.finfo(input_type).min))
 		dest = FLAGS.dest_wav + str(snr) + '.wav' 
-		noisy = (noisy_signal[snr]/fact).astype(np.float32)
-		wavfile.write(dest,fs,noisy[0])
+		noisy = (noisy_signal[snr]).astype(np.int16)
+		wavfile.write(dest,fs,noisy)
 		correctness[i] = label_wav(dest, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
 		i +=1
 
