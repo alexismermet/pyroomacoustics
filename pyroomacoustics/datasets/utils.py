@@ -117,10 +117,10 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
     noise_reverb = noise_reverb[:,:len(audio_reverb[0])][0]
     noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
-    noisy_signal = np.zeros((len(snr_vals),audio_reverb.shape[0], audio_reverb.shape[1]))
+    noisy_signal = {}
 
-    for i,snr in enumerate(snr_vals):
+    for snr in snr_vals:
         noise_std = np.linalg.norm(audio_reverb[0])/(10**(snr/20.))
         final_noise = noise_normalized*noise_std
-        noisy_signal[i,:,:] = audio_reverb[0] + final_noise
+        noisy_signal[snr] = audio_reverb[0] + final_noise
     return noisy_signal
