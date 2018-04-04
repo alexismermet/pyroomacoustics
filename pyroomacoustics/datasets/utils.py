@@ -152,8 +152,8 @@ def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_arr
     room_noise.add_source([4,2,1.5], signal=noise_anechoic)
 
     #we had the microphones array in both room
-    room_signal.add_microphone_array(mic_array)
-    room_noise.add_microphone_array(mic_array)
+    room_signal.add_microphone_array(pra.MicrophoneArray(mic_array.T,room_signal.fs))
+    room_noise.add_microphone_array(pra.MicrophoneArray(mic_array.T,room_signal.fs))
 
     #simulate both rooms
     room_signal.simulate()

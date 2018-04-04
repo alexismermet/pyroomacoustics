@@ -78,9 +78,7 @@ if __name__ == '__main__':
 	room_dim = [5,4,6]
 	snr_vals = np.arange(100,-10,-10)
 	number_mics = 1
-	mic_array = pra.MicrophoneArray(
-            np.array([[2, 1.5, 2]]).T, 
-            16000)
+	mic_array = np.array([[2, 1.5, 2]])
 	desired_word = 'yes'
 
 	#create object
