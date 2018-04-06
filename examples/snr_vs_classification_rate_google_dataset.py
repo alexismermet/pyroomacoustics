@@ -64,7 +64,6 @@ def label_wav(wav,labels,graph,word):
     with open(wav,'rb') as wav_file:
         wav_data = wav_file.read()
     index = labels_list.index(word)
-    print(index)
     return run_graph(wav_data,labels_list,index)
 
 
@@ -108,7 +107,7 @@ if __name__ == '__main__':
     #creating one noisy recording for each value
     speech_file_location = speech.meta.as_dict()['file_loc']
     noise_file_location = noise.meta.as_dict()['file_loc']
-    noisy_signal = utils.modify_input_wav(speech_file_location,noise_file_location,room_dim,max_order,snr_vals)
+    noisy_signal = utils.modify_input_wav(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,np.array([[2, 1.5, 2]]))
 
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)

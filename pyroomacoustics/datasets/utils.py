@@ -62,7 +62,7 @@ def download_uncompress_tar_gz(url, path='.', chunk_size=None):
 
 
 
-def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
+def modify_input_wav(wav,noise,room_dim,max_order,snr_vals,mic_pos):
 
     '''
     for mono
@@ -92,12 +92,12 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
     #we add a microphone at the same position in both of the boxes
     room_signal.add_microphone_array(
         pra.MicrophoneArray(
-            np.array([[2, 1.5, 2]]).T, 
+            mic_pos.T, 
             room_signal.fs)
         )
     room_noise.add_microphone_array(
         pra.MicrophoneArray(
-            np.array([[2, 1.5, 2]]).T, 
+            mic_pos.T, 
             room_noise.fs)
         )
 
@@ -116,7 +116,6 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
     #normalize the noise
     noise_reverb = noise_reverb[0,:len(audio_reverb[0])]
     noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
-    print(len(noise_reverb))
 
     #initialize the noiy_signal
     noisy_signal = {}
@@ -128,7 +127,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
         noisy_signal[snr] = audio_reverb[0] + final_noise
     return noisy_signal
 
-def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_array):
+def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_array,pos_source,pos_noise):
 
     fs_s, audio_anechoic = wavfile.read(wav)
     fs_n, noise_anechoic = wavfile.read(noise)
@@ -148,12 +147,12 @@ def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_arr
         max_order = max_order)
 
     #source of the signal and of the noise in their respectiv boxes
-    room_signal.add_source([2,3.1,2],signal=audio_anechoic)
-    room_noise.add_source([4,2,1.5], signal=noise_anechoic)
+    room_signal.add_source(pos_source,signal=audio_anechoic)
+    room_noise.add_source(pos_noise, signal=noise_anechoic)
 
     #we had the microphones array in both room
     room_signal.add_microphone_array(pra.MicrophoneArray(mic_array.T,room_signal.fs))
-    room_noise.add_microphone_array(pra.MicrophoneArray(mic_array.T,room_signal.fs))
+    room_noise.add_microphone_array(pra.MicrophoneArray(mic_array.T,room_noise.fs))
 
     #simulate both rooms
     room_signal.simulate()
@@ -177,7 +176,6 @@ def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_arr
         #normalize the noise
         noise_reverb[i] = noise_reverb[i,:len(audio_reverb[i])]
         noise_normalized[i] = noise_reverb[i]/np.linalg.norm(noise_reverb[i])
-        print(len(noise_reverb[i]))
 
     #initilialize the array of noisy_signal
     noisy_signal = np.zeros([len(snr_vals),shape[0],shape[1]])
