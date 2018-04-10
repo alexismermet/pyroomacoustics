@@ -65,7 +65,6 @@ def label_wav(wav,labels,graph,word):
     with open(wav,'rb') as wav_file:
         wav_data = wav_file.read()
     index = labels_list.index(word)
-    print(index)
     return run_graph(wav_data,labels_list,index)
 
 if __name__ == '__main__':
@@ -77,8 +76,8 @@ if __name__ == '__main__':
 	max_order = 3
 	room_dim = [5,4,6]
 	snr_vals = np.arange(100,-10,-10)
-	number_mics = 1
-	mic_array = np.array([[2, 1.5, 2]])
+	number_mics = 3
+	mic_array = np.array([[2, 1.5, 2],[1,1,1],[1.5,2.5,4]])
 	desired_word = 'yes'
 
 	#create object
@@ -103,7 +102,7 @@ if __name__ == '__main__':
     #creating a noisy_signal array for each snr value
 	speech_file_location = speech.meta.as_dict()['file_loc']
 	noise_file_location = noise.meta.as_dict()['file_loc']
-	noisy_signal = utils.modify_input_wav_multiple_mics(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,mic_array)
+	noisy_signal = utils.modify_input_wav_multiple_mics(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,mic_array,[2,3.1,2],[4,2,1.5])
 
 	if not os.path.exists(dest_dir):
 		os.makedirs(dest_dir)
@@ -118,6 +117,7 @@ if __name__ == '__main__':
 			score[i][m] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
 
 	for m in range(number_mics):
-		plt.plot(snr_vals,score[:,m])
+		plt.plot(snr_vals,score[:,m], label="mic_%d" %m)
+		plt.legend()
 	plt.title('SNR for each mics agaisnt percentage of confidence')
 	plt.show()

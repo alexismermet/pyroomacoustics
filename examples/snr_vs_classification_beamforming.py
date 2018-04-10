@@ -85,7 +85,7 @@ if __name__ == '__main__':
     d = 0.08                 #distance between microphones
     phi = 0.                 #angle from horizontal
     max_order_design = 1     #maximum image generation used in design
-    shape = 'Linear'         #array shape
+    shape = 'Circular'         #array shape
     Lg_t = 0.100             #filter size in seconds
     Lg = np.ceil(Lg_t*16000) #filter size in samples
     delay = 0.050            #beamformer delay in seconds

@@ -167,22 +167,28 @@ def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_arr
     noise_normalized = np.zeros(shape)
 
     #for each microphones
+    if(len(noise_reverb[0]) < len(audio_reverb[0])):
+        raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
     noise_reverb = noise_reverb[:,:len(audio_reverb[0])]
-    for i in range(shape[0]):
-        #verify the size of the two arrays such that we can continue working on the signal
-        if(len(noise_reverb[i]) < len(audio_reverb[i])):
-            raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!') 
+    # for i in range(shape[0]):
+    #     #verify the size of the two arrays such that we can continue working on the signal
+    #     if(len(noise_reverb[i]) < len(audio_reverb[i])):
+    #         raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!') 
 
-        #normalize the noise
-        noise_reverb[i] = noise_reverb[i,:len(audio_reverb[i])]
-        noise_normalized[i] = noise_reverb[i]/np.linalg.norm(noise_reverb[i])
+    #     #normalize the noise
+    #     noise_reverb[i] = noise_reverb[i,:len(audio_reverb[i])]
+    #     noise_normalized[i] = noise_reverb[i]/np.linalg.norm(noise_reverb[i])
+
+    norm_fact = np.linalg.norm(noise_reverb[0])
+    noise_normalized = noise_reverb / norm_fact
 
     #initilialize the array of noisy_signal
     noisy_signal = np.zeros([len(snr_vals),shape[0],shape[1]])
 
     for i,snr in enumerate(snr_vals):
+        noise_std = np.linalg.norm(audio_reverb[0])/(10**(snr/20.))
         for m in range(shape[0]):
-            noise_std = np.linalg.norm(audio_reverb[m])/(10**(snr/20.))
+            
             final_noise = noise_normalized[m]*noise_std
             noisy_signal[i][m] = audio_reverb[m] + final_noise
 
