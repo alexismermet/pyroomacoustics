@@ -52,7 +52,6 @@ url = "http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz"
 
 class GoogleSpeechCommands(Dataset):
     '''
-
     Parameters
     ----------
     basedir: str, optional
@@ -96,78 +95,74 @@ class GoogleSpeechCommands(Dataset):
         Build the corpus with some filters (speech or not speech)
         '''
 
-        # # TODO
-        # if subset is None:
+        # TODO
+        if subset is None:
 
-        self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+            self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+            self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-        for idx, word in enumerate(self.classes):
+            for idx, word in enumerate(self.classes):
 
-            if word == '_background_noise_':
-                speech = 0
-            else:
-                speech = 1
-
-            word_path = self.subdirs[idx]
-
-            self.size_by_samples[word] = 0
-            for filename in glob.glob(os.path.join(word_path, '*.wav')):
-
-                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
-
-                # could also add score of original model for each word?
-                if speech:
-                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                if word == '_background_noise_':
+                    speech = 0
                 else:
-                    noise_type = os.path.basename(filename).split(".")[0]
-                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                    speech = 1
 
-                # not sure about this command
-                if meta.match(**kwargs):
-                    self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                word_path = self.subdirs[idx]
 
-                self.size_by_samples[word] += 1
-        # else:
+                self.size_by_samples[word] = 0
+                for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
-        # 	if not isinstance(subset,int):
-        # 		raise ValueError("the subset value has to be the size of the subset you want per words.")
+                    file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
-        # 	self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-	       #  self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+                    # could also add score of original model for each word?
+                    if speech:
+                        meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                    else:
+                        noise_type = os.path.basename(filename).split(".")[0]
+                        meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
 
-	       #  for idx, word in enumerate(self.classes):
+                    # not sure about this command
+                    if meta.match(**kwargs):
+                        self.add_sample(GoogleSample(filename, **meta.as_dict()))
 
-	       #      if word == '_background_noise_':
-	       #          speech = 0
-	       #      else:
-	       #          speech = 1
+                    self.size_by_samples[word] += 1
+        else:
 
-	       #      word_path = self.subdirs[idx]
+            if not isinstance(subset,int):
+                raise ValueError("the subset value has to be the size of the subset you want per words.")
 
-	       #      self.size_by_samples[word] = 0
-	       #      for filename in glob.glob(os.path.join(word_path, '*.wav')):
+            self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+            self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-	       #          file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+            for idx, word in enumerate(self.classes):
 
-	       #          # could also add score of original model for each word?
-	       #          if speech:
-	       #              meta = Meta(word=word, speech=speech, file_loc=file_loc)
-	       #          else:
-	       #              noise_type = os.path.basename(filename).split(".")[0]
-	       #              meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                if word == '_background_noise_':
+                    speech = 0
+                else:
+                    speech = 1
 
-        #             # not sure about this command
-        #             if meta.match(**kwargs):
-        #                 if (word == '_background_noise_'):
-        #                 	self.add_sample(GoogleSample(filename, **meta.as_dict()))
-        #                 else:
-        #                 	if(self.size_by_samples[word] < subset):
-        #                 		self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                word_path = self.subdirs[idx]
 
-        #             self.size_by_samples[word] += 1
+                self.size_by_samples[word] = 0
+                for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
+                    file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
+                    # could also add score of original model for each word?
+                    if speech:
+                        meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                    else:
+                        noise_type = os.path.basename(filename).split(".")[0]
+                        meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                    if meta.match(**kwargs):
+                        if word == '_background_noise_':
+                            self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                            self.size_by_samples[word] += 1
+                        else:
+                            if(self.size_by_samples[word] < subset):
+                                self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                                self.size_by_samples[word] += 1
 
             # make sure subset is an integer and take `subset` values from each class
             # and all the background noise
@@ -184,9 +179,7 @@ class GoogleSpeechCommands(Dataset):
         '''
         Build new corpus which are subset of a given size of the original one.
         The elements composing these new_corpus are taken randomly from the original corpus.
-
         We can use these functions to create new training and testing set form the full dataset.
-
         RETURN:
         -One new sample if trainTestSplit is false
         -Two new samples if trainTestSplit is true
@@ -194,12 +187,12 @@ class GoogleSpeechCommands(Dataset):
 
 
         # DRAWING RANDOM VALUES --> TODO
-        n_samples = 20
-        subset_len = 5
-        idx = np.arange(n_samples)
-        np.random.seed(seed) # BEFORE SHUFFLING SET SEED, BEFORE EACH TIME YOU DO SHUFFLE!
-        np.random.shuffle(idx)
-        subset_idx = idx[:subset_len]
+        #n_samples = 20
+        #subset_len = 5
+        #idx = np.arange(n_samples)
+        #np.random.seed(seed) # BEFORE SHUFFLING SET SEED, BEFORE EACH TIME YOU DO SHUFFLE!
+        #np.random.shuffle(idx)
+        #subset_idx = idx[:subset_len]
         ###
 
         
@@ -213,9 +206,11 @@ class GoogleSpeechCommands(Dataset):
         else:
             new_corpus = GoogleSpeechCommands()
 
-        
         for word in enumerate(self.classes):
-            indices[word] = np.random.randint(0,self.size_by_samples[word]-1,n)
+            idx = np.arange(self.size_by_samples[word])
+            np.random.seed(seed)
+            np.random.shuffle(idx)
+            indices[word] = idx[:n]
 
         for word in enumerate(self.classes):
             for index in indices[word]:
@@ -245,7 +240,6 @@ class GoogleSpeechCommands(Dataset):
 class GoogleSample(AudioSample):
     '''
     Create the sound object
-
     Parameters
     ----------
     path: str
@@ -295,4 +289,3 @@ class GoogleSample(AudioSample):
             plt.title(self.meta.file_loc)
         else:
             plt.title(self.meta.file_loc)
-

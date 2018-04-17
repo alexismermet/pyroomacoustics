@@ -33,6 +33,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 
 	fs_s, audio_anechoic = wavfile.read(wav)
 	fs_n, noise_anechoic = wavfile.read(noise)
+
 	
 	#Create a room for the signal
 	room_signal= pra.ShoeBox(
@@ -46,7 +47,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 		room_dim,
 		absorption=0.2,
 		fs=fs_n,
-		max_order = max_order + 1)
+		max_order = max_order)
 
 	#source of the signal and of the noise in their respectiv boxes
 	room_signal.add_source([2,3.1,2],signal=audio_anechoic)
@@ -73,19 +74,19 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals):
 	noise_reverb = room_noise.mic_array.signals
 
 	#verify the size of the two arrays such that we can continue working on the signal
-	if(len(noise_reverb) < len(audio_reverb)):
+	if(len(noise_reverb[0]) < len(audio_reverb[0])):
 		raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
 
 	#normalize the noise
-	noise_reverb = noise_reverb[:,:np.shape(audio_reverb)[1]]
+	noise_reverb = noise_reverb[:,:len(audio_reverb[0])][0]
 	noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
 	noisy_signal = {}
 
 	for snr in snr_vals:
-		noise_std = np.linalg.norm(audio_reverb)/(10**(snr/20.))
+		noise_std = np.linalg.norm(audio_reverb[0])/(10**(snr/20.))
 		final_noise = noise_normalized*noise_std
-		noisy_signal[snr] = audio_reverb + final_noise
+		noisy_signal[snr] = audio_reverb[0] + final_noise
 	return noisy_signal
 
 
@@ -139,7 +140,8 @@ def run_graph(wav_data, labels, how_many_labels):
 		human_string = labels[node_id]
 		score = predictions[node_id]
 		print('%s (score = %.5f)' % (human_string, score))
-	return score
+	return predictions[2]
+
 
 
 def label_wav(wav,labels,graph,how_many_labels):
@@ -170,10 +172,10 @@ def main(_):
 	correctness = np.empty(len(snr_vals))
 	for snr in snr_vals:
 		dest = FLAGS.dest_wav + str(snr) + '.wav' 
-		noisy =noisy_signal[snr]
-		print(noisy)
-		wavfile.write(dest,fs,noisy[0])
+		noisy = (noisy_signal[snr]).astype(np.int16)
+		wavfile.write(dest,fs,noisy)
 		correctness[i] = label_wav(dest, FLAGS.labels, FLAGS.graph, FLAGS.how_many_labels)
+		i +=1
 
 	plt.plot(snr_vals,correctness)
 	plt.title('SNR against percentage of confidence')

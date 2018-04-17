@@ -16,11 +16,11 @@ import os, argparse
 if __name__ == '__main__':
 
     # create object
-    dataset = pra.datasets.GoogleSpeechCommands(download=True)
+    dataset = pra.datasets.GoogleSpeechCommands(download=True,subset=10)
 
     # print dataset info and 10 sentences
     print(dataset)
-    dataset.head(n=10)
+    #dataset.head(n=10)
 
     # # TODO subset example
     # subset = dataset.subset()
