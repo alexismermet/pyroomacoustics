@@ -52,7 +52,6 @@ url = "http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz"
 
 class GoogleSpeechCommands(Dataset):
     '''
-
     Parameters
     ----------
     basedir: str, optional
@@ -99,71 +98,71 @@ class GoogleSpeechCommands(Dataset):
         # TODO
         if subset is None:
 
-	        self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-	        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+            self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+            self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-	        for idx, word in enumerate(self.classes):
+            for idx, word in enumerate(self.classes):
 
-	            if word == '_background_noise_':
-	                speech = 0
-	            else:
-	                speech = 1
+                if word == '_background_noise_':
+                    speech = 0
+                else:
+                    speech = 1
 
-	            word_path = self.subdirs[idx]
+                word_path = self.subdirs[idx]
 
-	            self.size_by_samples[word] = 0
-	            for filename in glob.glob(os.path.join(word_path, '*.wav')):
+                self.size_by_samples[word] = 0
+                for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
-	                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+                    file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
-	                # could also add score of original model for each word?
-	                if speech:
-	                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
-	                else:
-	                    noise_type = os.path.basename(filename).split(".")[0]
-	                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                    # could also add score of original model for each word?
+                    if speech:
+                        meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                    else:
+                        noise_type = os.path.basename(filename).split(".")[0]
+                        meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
 
-	                # not sure about this command
-	                if meta.match(**kwargs):
-	                    self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                    # not sure about this command
+                    if meta.match(**kwargs):
+                        self.add_sample(GoogleSample(filename, **meta.as_dict()))
 
-	                self.size_by_samples[word] += 1
+                    self.size_by_samples[word] += 1
         else:
 
-        	if not isinstance(subset,int):
-        		raise ValueError("the subset value has to be the size of the subset you want per words.")
+            if not isinstance(subset,int):
+                raise ValueError("the subset value has to be the size of the subset you want per words.")
 
-        	self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
-	        self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
+            self.subdirs = glob.glob(os.path.join(self.basedir,'*','.'))
+            self.classes = [s.split(os.sep)[-2] for s in self.subdirs]
 
-	        for idx, word in enumerate(self.classes):
+            for idx, word in enumerate(self.classes):
 
-	            if word == '_background_noise_':
-	                speech = 0
-	            else:
-	                speech = 1
+                if word == '_background_noise_':
+                    speech = 0
+                else:
+                    speech = 1
 
-	            word_path = self.subdirs[idx]
+                word_path = self.subdirs[idx]
 
-	            self.size_by_samples[word] = 0
-	            for filename in glob.glob(os.path.join(word_path, '*.wav')):
+                self.size_by_samples[word] = 0
+                for filename in glob.glob(os.path.join(word_path, '*.wav')):
 
-	                file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
+                    file_loc = os.path.join(self.basedir, word, os.path.basename(filename))
 
-	                # could also add score of original model for each word?
-	                if speech:
-	                    meta = Meta(word=word, speech=speech, file_loc=file_loc)
-	                else:
-	                    noise_type = os.path.basename(filename).split(".")[0]
-	                    meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
-	                if meta.match(**kwargs):
-	                	if word == '_background_noise_':
-	                		self.add_sample(GoogleSample(filename, **meta.as_dict()))
-	                		self.size_by_samples[word] += 1
-                		else:
-                			if(self.size_by_samples[word] < subset):
-                				self.add_sample(GoogleSample(filename, **meta.as_dict()))
-                				self.size_by_samples[word] += 1
+                    # could also add score of original model for each word?
+                    if speech:
+                        meta = Meta(word=word, speech=speech, file_loc=file_loc)
+                    else:
+                        noise_type = os.path.basename(filename).split(".")[0]
+                        meta = Meta(noise_type=noise_type, speech=speech, file_loc=file_loc)
+                    if meta.match(**kwargs):
+                        if word == '_background_noise_':
+                            self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                            self.size_by_samples[word] += 1
+                        else:
+                            if(self.size_by_samples[word] < subset):
+                                self.add_sample(GoogleSample(filename, **meta.as_dict()))
+                                self.size_by_samples[word] += 1
 
             # make sure subset is an integer and take `subset` values from each class
             # and all the background noise
@@ -180,9 +179,7 @@ class GoogleSpeechCommands(Dataset):
         '''
         Build new corpus which are subset of a given size of the original one.
         The elements composing these new_corpus are taken randomly from the original corpus.
-
         We can use these functions to create new training and testing set form the full dataset.
-
         RETURN:
         -One new sample if trainTestSplit is false
         -Two new samples if trainTestSplit is true
@@ -210,10 +207,10 @@ class GoogleSpeechCommands(Dataset):
             new_corpus = GoogleSpeechCommands()
 
         for word in enumerate(self.classes):
-        	idx = np.arange(self.size_by_samples[word])
-        	np.random.seed(seed)
-        	np.random.shuffle(idx)
-        	indices[word] = idx[:n]
+            idx = np.arange(self.size_by_samples[word])
+            np.random.seed(seed)
+            np.random.shuffle(idx)
+            indices[word] = idx[:n]
 
         for word in enumerate(self.classes):
             for index in indices[word]:
@@ -243,7 +240,6 @@ class GoogleSpeechCommands(Dataset):
 class GoogleSample(AudioSample):
     '''
     Create the sound object
-
     Parameters
     ----------
     path: str
@@ -293,4 +289,3 @@ class GoogleSample(AudioSample):
             plt.title(self.meta.file_loc)
         else:
             plt.title(self.meta.file_loc)
-
