@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     #Create the Microphone array
     if shape is 'Circular':
-        R = pra.circular_2D_array(mic, number_mics, phi, d*M/(2*np.pi)) 
+        R = pra.circular_2D_array(mic, number_mics, phi, d*number_mics/(2*np.pi)) 
     else:
         R = pra.linear_2D_array(mic, number_mics, phi, d)
     print(R)

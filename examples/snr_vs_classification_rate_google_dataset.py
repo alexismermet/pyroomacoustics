@@ -76,7 +76,7 @@ if __name__ == '__main__':
     graph_file = "my_frozen_graph.pb"
     max_order = 3
     room_dim = [5,4,6]
-    snr_vals = np.arange(100,-10,-10)
+    snr_vals = np.arange(60,-25,-5)
     desired_word = 'yes'
 
     # create object
@@ -104,9 +104,9 @@ if __name__ == '__main__':
 
 
 
-    #creating one noisy recording for each value
-    speech_file_location = speech.meta.as_dict()['file_loc']
-    noise_file_location = noise.meta.as_dict()['file_loc']
+    #creating one noisy recording for each SNR value
+    speech_file_location = speech.meta.file_loc
+    noise_file_location = noise.meta.file_loc
     noisy_signal = utils.modify_input_wav(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,np.array([[2, 1.5, 2]]))
 
     if not os.path.exists(dest_dir):
@@ -119,10 +119,13 @@ if __name__ == '__main__':
         print(dest)
         noisy = (noisy_signal[snr]).astype(np.int16)
         wavfile.write(dest,16000,noisy)
-        score[i] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
+        score[i] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word']) 
 
-    plt.plot(snr_vals,score)
-    plt.title('SNR against percentage of confidence')
+    plt.plot(snr_vals,score*100)
+    plt.xlabel("SNR [dB]")
+    plt.ylabel("% confidence")
+    plt.grid()
+    plt.title("'%s' under '%s' noise" % (desired_word, noise.meta.noise_type) )
     plt.show()
 
 

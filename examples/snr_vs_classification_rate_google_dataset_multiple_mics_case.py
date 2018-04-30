@@ -75,7 +75,7 @@ if __name__ == '__main__':
 	graph_file = "my_frozen_graph.pb"
 	max_order = 3
 	room_dim = [5,4,6]
-	snr_vals = np.arange(100,-10,-10)
+	snr_vals = np.arange(60,-25,-5)
 	number_mics = 3
 	mic_array = np.array([[2, 1.5, 2],[1,1,1],[1.5,2.5,4]])
 	desired_word = 'yes'
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 	score = np.empty([len(snr_vals),number_mics])
 	for i,snr in enumerate(snr_vals):
 		for m in range(number_mics):
-			dest = os.path.join(dest_dir,"snr_db_%d_mic_%d" %(snr,m))
+			dest = os.path.join(dest_dir,"snr_db_%d_mic_%d.wav" %(snr,m))
 			print(dest)
 			noisy = (noisy_signal[i][m]).astype(np.int16)
 			wavfile.write(dest,16000,noisy)
@@ -120,4 +120,8 @@ if __name__ == '__main__':
 		plt.plot(snr_vals,score[:,m], label="mic_%d" %m)
 		plt.legend()
 	plt.title('SNR for each mics agaisnt percentage of confidence')
+	plt.xlabel("SNR [dB]")
+	plt.ylabel("% confidence")
+	plt.title("'%s' under '%s' noise for multiple microphones" % (desired_word, noise.meta.noise_type))
+	plt.grid()
 	plt.show()

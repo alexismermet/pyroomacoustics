@@ -8,7 +8,7 @@ def download_uncompress_tar_bz2(url, path='.'):
     # open the stream
     r = requests.get(url, stream=True)
 
-    tmp_file = 'temp_file.tar'
+    tmp_file = 'temp_file.tar'  
 
     # Download and uncompress at the same time.
     chunk_size = 4 * 1024 * 1024  # wait for chunks of 4MB
@@ -113,7 +113,7 @@ def modify_input_wav(wav,noise,room_dim,max_order,snr_vals,mic_pos):
     if(len(noise_reverb[0]) < len(audio_reverb[0])):
         raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
 
-    #normalize the noise
+    #normalize the noise_reverb
     noise_reverb = noise_reverb[0,:len(audio_reverb[0])]
     noise_normalized = noise_reverb/np.linalg.norm(noise_reverb)
 
@@ -191,9 +191,6 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
     fs_s, audio_anechoic = wavfile.read(wav)
     fs_n, noise_anechoic = wavfile.read(noise)
 
-    Lg_t = 0.100             #filter size in seconds
-    Lg = np.ceil(Lg_t*16000) #filter size in samples
-
     #Create a room for the signal
     room_signal= pra.ShoeBox(
         room_dim,
@@ -213,8 +210,8 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
     room_noise.add_source(pos_noise, signal=noise_anechoic)
 
     #add the microphone array
-    mics_signal = pra.Beamformer(mic_array, room_signal.fs,N,Lg=Lg)
-    mics_noisy = pra.Beamformer(mic_array, room_noise.fs,N,Lg=Lg)
+    mics_signal = pra.Beamformer(mic_array, room_signal.fs,N)
+    mics_noisy = pra.Beamformer(mic_array, room_noise.fs,N)
     room_signal.add_microphone_array(mics_signal)
     room_noise.add_microphone_array(mics_noisy)
 
@@ -227,10 +224,11 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
     noise_reverb = room_noise.mic_array.signals
 
     #design beamforming filters
-    mics_signal.rake_delay_and_sum_weights(room_signal.sources[0][0:1])
-    mics_noisy.rake_delay_and_sum_weights(room_signal.sources[0][0:1])
+    mics_signal.rake_delay_and_sum_weights(room_signal.sources[0][:1])
+    mics_noisy.rake_delay_and_sum_weights(room_signal.sources[0][:1])
 
     output_signal = mics_signal.process()
+    output_noise = mics_noisy.process()
 
     #we're going to normalize the noise
     size = np.shape(audio_reverb)
@@ -239,14 +237,10 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
     #for each microphones
     if(len(noise_reverb[0]) < len(audio_reverb[0])):
         raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
-    noise_reverb = noise_reverb[:,:len(audio_reverb[0])]
+    output_noise = output_noise[:len(output_signal)]
 
-    norm_fact = np.linalg.norm(noise_reverb[0])
-    noise_normalized = noise_reverb / norm_fact
-
-    room_noise.mic_array.signals = noise_normalized
-
-    output_noise = mics_noisy.process()
+    norm_fact = np.linalg.norm(output_noise)
+    noise_normalized = output_noise / norm_fact
 
     #initilialize the array of noisy_signal
     noisy_signal = np.zeros([len(snr_vals),np.shape(output_signal)[0]])
@@ -254,7 +248,7 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
     for i,snr in enumerate(snr_vals):
         noise_std = np.linalg.norm(output_signal)/(10**(snr/20.))
         final_noise = output_noise*noise_std
-        noisy_signal[i] = output_signal + final_noise
+        noisy_signal[i] = pra.normalize(pra.highpass(output_signal + final_noise,fs_s), bits=16)
 
     return noisy_signal
 
