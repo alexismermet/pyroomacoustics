@@ -9,6 +9,7 @@ def download_uncompress(url, path='.', compression=None):
     '''
     This functions download and uncompress on the fly a file
     of type tar, tar.gz, tar.bz2.
+
     Parameters
     ----------
     url: str
