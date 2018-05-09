@@ -124,3 +124,11 @@ if __name__ == '__main__':
             noisy = noisy_signal_beamformed[s][i].astype(np.int16)
             wavfile.write(dest,16000,noisy)
             score[idx][i] = label_wav(dest, labels_file, graph_file, s.meta.as_dict()['word'])
+
+    score_av = np.average(score, axis=0)
+    plt.title('Classification of %s for %d given samples' %(desired_words,sub))
+    plt.xlabel('SNR values [dB]')
+    plt.ylabel('% confidence')
+    plt.plot(snr_vals,score_av)
+    plt.grid()
+    plt.show()
