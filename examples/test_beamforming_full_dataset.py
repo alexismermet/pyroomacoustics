@@ -83,7 +83,7 @@ if __name__ == '__main__':
     phi = 0.                 #angle from horizontal
     shape = 'Circular'       #array shape
     N = 1024                 #FFT length
-    sub = 2
+    sub = 50
 
     #Create the Microphone array
     if shape is 'Circular':
@@ -99,11 +99,9 @@ if __name__ == '__main__':
     #separate the noise and the speech samples
     noise_samps = dataset.filter(speech=0)
     speech_samps = dataset.filter(speech=1)
-    desired_words = ['_silence_','_unknown_','yes','no','up','down','left','right','on','off','stop','go']
+    desired_words = 'yes'
     print(desired_words)
     speech_samps = speech_samps.filter(word=desired_words)
-
-    print(speech_samps)
     
     noise = noise_samps[0]
     noise_file_location = noise.meta.as_dict()['file_loc']
@@ -115,23 +113,14 @@ if __name__ == '__main__':
     noisy_signal_beamformed = {}
     for s in speech_samps:
         noisy_signal_beamformed[s] = utils.modify_input_wav_beamforming(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,R,pos_source,pos_noise,N) 
-    print(noisy_signal_beamformed)
 
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
 
-    score = {'_silence_':np.array([sub,len(snr_vals)]),'_unknown_':np.array([sub,len(snr_vals)]),'yes':np.array([sub,len(snr_vals)]),'no':np.array([sub,len(snr_vals)]),'up':np.array([sub,len(snr_vals)]),'down':np.array([sub,len(snr_vals)]),'left':np.array([sub,len(snr_vals)]),'right':np.array([sub,len(snr_vals)]),'on':np.array([sub,len(snr_vals)]),'off':np.array([sub,len(snr_vals)]),'stop':np.array([sub,len(snr_vals)]),'go':np.array([sub,len(snr_vals)])}
-    index = 0
-    for s in speech_samps:
-        curr = s.meta.as_dict()['word']
+    score = np.zeros([sub,len(snr_vals)])
+    for idx,s in enumerate(speech_samps):
         for i,snr in enumerate(snr_vals):
-            dest = os.path.join(dest_dir,"beamforming_signal%d_snr_db_%d.wav" %(index,snr))
+            dest = os.path.join(dest_dir,"beamforming_signal%d_snr_db_%d.wav" %(idx,snr))
             noisy = noisy_signal_beamformed[s][i].astype(np.int16)
             wavfile.write(dest,16000,noisy)
-            score[s.meta.as_dict()['word']][index][i] = label_wav(dest, labels_file, graph_file, s.meta.as_dict()['word'])
-        pred = curr
-        index += 1
-        if(pred != curr):
-            index = 0
-
-    print(score)
+            score[idx][i] = label_wav(dest, labels_file, graph_file, s.meta.as_dict()['word'])
