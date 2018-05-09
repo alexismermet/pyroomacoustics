@@ -109,7 +109,7 @@ if __name__ == '__main__':
     speech_file_location = speech.meta.file_loc
     noise_file_location = noise.meta.file_loc
 
-    noisy_signal = pra.noise_supp.noise_suppressor(speech_file_location,noise_file_location,room_dim,pos_source,pos_noise,max_order,mic_array,fft_length,alpha,beta):
+    noisy_signal = pra.noise_supp.noise_suppressor(speech_file_location,noise_file_location,room_dim,pos_source,pos_noise,max_order,mic_array,fft_length,alpha,beta)
 
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
@@ -117,5 +117,4 @@ if __name__ == '__main__':
     dest = os.path.join(dest_dir,"noisy_signal.wav")
     wavfile.write(dest,16000,noisy_signal)
     score = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
-
-    return score
+    print(score)
