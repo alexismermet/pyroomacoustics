@@ -70,7 +70,7 @@ if __name__ == '__main__':
     graph_file = "my_frozen_graph.pb"
     max_order = 3
     room_dim = [4,6]
-    snr_vals = np.arange(50,-10,-10)
+    snr_vals = np.arange(50,-25,-10)
     pos_source = [1,4.5]
     pos_noise = [2.8,4.3]
     number_mics = 6
@@ -91,7 +91,6 @@ if __name__ == '__main__':
     #create object
     dataset = pra.datasets.GoogleSpeechCommands(download=True,subset=sub)
     print(dataset)
-
 
     #separate the noise and the speech samples
     noise_samps = dataset.filter(speech=0)
@@ -127,7 +126,7 @@ if __name__ == '__main__':
    			wavfile.write(dest,16000,noisy)
    			score_map[word][idx][i] = label_wav(dest, labels_file, graph_file, word)
    			idx +=1
-   			if(idx == 5 ):
+   			if(idx == sub):
    				idx = 0
     score_map_average = {}			
     for w in desired_words:
@@ -136,7 +135,9 @@ if __name__ == '__main__':
     plt.title('Classification of %s for %d given samples' %(desired_words,sub))
     plt.xlabel('SNR values [dB]')
     plt.ylabel('% confidence')
-    plt.plot(snr_vals,score_map_average)
+    for w in desired_words:
+    	plt.plot(snr_vals,score_map_average[w],label=w)
+    	plt.legend()
     plt.grid()
     plt.show()
    	
