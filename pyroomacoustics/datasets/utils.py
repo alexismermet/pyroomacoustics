@@ -182,7 +182,7 @@ def modify_input_wav_multiple_mics(wav,noise,room_dim,max_order,snr_vals,mic_arr
         for m in range(shape[0]):
             
             final_noise = noise_normalized[m]*noise_std
-            noisy_signal[i][m] = audio_reverb[m] + final_noise
+            noisy_signal[i][m] = pra.normalize(audio_reverb[m] + final_noise)
 
     return noisy_signal
 
