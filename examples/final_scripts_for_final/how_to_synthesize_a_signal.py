@@ -16,7 +16,7 @@ sys.path.append(
 
 import pyroomacoustics as pra
 import os, argparse
-import pyroomacoustics.datasets.utils as utils
+import utils
 import matplotlib.pyplot as plt
 from scipy.io import wavfile 
 
@@ -29,55 +29,33 @@ if __name__ == '__main__':
 	max_order = 3
 	# the dimension of you room
 	room_dim = [5,4,6]
-	# the SNR values in dB we use to create the differents samples
-	snr_vals = np.arange(60,-25,-5)
+	# the SNR value in dB we use to create the new sample (here you can give a list if you
+	# want to create multiples samples. The code is already ready for this change)
+	snr_vals = [20]
 	# the number of mic you want placed in the room
 	number_mics = 3
 	# your microphones' array containing the position of your number_mics microphones you are going to use in the rooms
 	mic_array = np.array([[2, 1.5, 2],[1,1,1],[1.5,2.5,4]])
-	# desired basis word(s) (can also be a list)*
-	desired_word = 'yes'
+	# your input wav you want to modify
+	speech_file_location = 'examples/final_scripts_for_final/00b01445_nohash_0.wav'
+	# your noise
+	noise_file_location = 'examples/final_scripts_for_final/pink_noise.wav'
+
 	# enable the sounddevice part
-	use_sounddevice = True
+	use_sounddevice = False
 	# destination directory to write your new samples
 	dest_dir = 'output_final_synthesis'
 	if not os.path.exists(dest_dir):
 		os.makedirs(dest_dir)
 
 	'''
-	In this example we are selecting our original sound from the GoogleSpeechCommand dataset
-	'''
-
-	# create the dataset object
-	dataset = pra.datasets.GoogleSpeechCommands(download=True,subset=1)
-	
-	# separate the noise and the speech samples
-	noise_samps = dataset.filter(speech=0)
-	speech_samps = dataset.filter(speech=1)
-	# filter the speech samples to take only the desired word(s)
-	speech_samps = speech_samps.filter(word=desired_word)
-
-	# pick one sample of each (from the noise samples and the speech samples filtered)
-	speech = speech_samps[0]
-	noise = noise_samps[1]
-
-	# print the information of our chosen speech and noise file
-	print("speech file info :")
-	print(speech.meta)
-	print("noise file info:")
-	print(noise.meta)
-	print()
-
-	'''
 	Create our new samples using pyroomacoustics
 	'''
 
 	# creating a noisy_signal array for each snr value
-	speech_file_location = speech.meta.as_dict()['file_loc']
-	noise_file_location = noise.meta.as_dict()['file_loc']
 	noisy_signal = utils.modify_input_wav_multiple_mics(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,mic_array,[2,3.1,2],[4,2,1.5])
 
-	# listen to your new samples or just write them to wav
+	# listen to your new sample or just write them to wav
 	for i,snr in enumerate(snr_vals):
 			noisy = np.average(noisy_signal[i],axis=0).astype('float32')
 			dest = os.path.join(dest_dir,"snr_db_%d.wav" %(snr))

@@ -7,7 +7,7 @@ the newly obtained file and compare them to the file without any processing.
 
 import numpy as np
 from scipy.io import wavfile
-import pyroomacoustics.datasets.utils as utils
+import utils
 
 import sys
 import os.path
@@ -77,15 +77,15 @@ if __name__ == '__main__':
 
     # how many order of reflection/refraction of the signal we consider in our rooms
     max_order = 3
-    # the dimension of you room
+    # the dimension of your room
     room_dim = [5,4,6]
-    # the SNR values in dB we use to create the differents samples
+    # the SNR values in dB we use to create the different samples
     snr_vals = np.arange(60,-25,-5)
-    # the number of mic you want placed in the room
+    # the number of mic you want to place in the room
     number_mics = 3
     # your microphones' array containing the position of your number_mics microphones you are going to use in the rooms
     mic_array = np.array([[2, 1.5, 2],[1,1,1],[1.5,2.5,4]])
-    # desired basis word(s) (can also be a list)*
+    # desired basis word(s) (can also be a list)
     desired_word = 'yes'
     #choose your label file
     labels_file = "conv_labels.txt"
@@ -203,9 +203,10 @@ if __name__ == '__main__':
     '''
     Write to WAV + labelling of our processed noisy signals
     '''
-    # labelling our different noisy signals
+    # labelling our different single noise channel removed signals and comparing their classification with the one for the original noisy signals
     score_processing = np.zeros(len(snr_vals))
     score_original = np.zeros(len(snr_vals))
+   
     for i, snr in enumerate(snr_vals):
         print("SNR : %f dB" % snr)
         dest = os.path.join(dest_dir,"single_noise_channel_signal_snr_db_%d.wav" %(snr))

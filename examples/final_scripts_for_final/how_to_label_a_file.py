@@ -13,7 +13,7 @@ sys.path.append(
 
 import pyroomacoustics as pra
 import os, argparse
-import pyroomacoustics.datasets.utils as utils
+import utils 
 import matplotlib.pyplot as plt
 from scipy.io import wavfile 
 
@@ -54,7 +54,6 @@ def run_graph(wav_data, labels, index, how_many_labels=3):
 
 # main function used for labelling. We add a retrun to this function to recover the results.
 # this function labels wavfiles so you always need to create a wavfile of your sound to label it.
-
 def label_wav(wav,labels,graph,word):
 
     if not wav or not tf.gfile.Exists(wav):
