@@ -78,7 +78,7 @@ if __name__ == '__main__':
     desired_word = 'yes'
     pos_source = [1,4.5]
     pos_noise = [2.8,4.3]
-    number_mics = 6
+    number_mics = 3
     mic = np.array([2,1.5])  #position
     d = 0.08                 #distance between microphones
     phi = 0.                 #angle from horizontal
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     else:
         R = pra.linear_2D_array(mic, number_mics, phi, d)
     R = np.concatenate((R, np.array(mic, ndmin=2).T), axis=1)
-    
+    3
     #create object
     dataset = pra.datasets.GoogleSpeechCommands(download=True,subset=1)
     print(dataset)

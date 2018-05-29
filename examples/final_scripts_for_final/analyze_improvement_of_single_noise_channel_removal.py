@@ -149,9 +149,6 @@ if __name__ == '__main__':
     noise_file_location = noise.meta.as_dict()['file_loc']
     noisy_signal = utils.modify_input_wav_multiple_mics(speech_file_location,noise_file_location,room_dim,max_order,snr_vals,mic_array,[2,3.1,2],[4,2,1.5])
 
-    # reading our basis speech signal such that we can obtain its size
-    fs_s, sound = wavfile.read(speech_file_location)
-
     # Create our new samples for each SNR values
     noisy_single_mic = noisy_signal[:,0,:]
 
@@ -196,7 +193,7 @@ if __name__ == '__main__':
     		# update step
     		P_prev = np.roll(P_prev, -1, axis=1)
     		n += hop
-
+    # we reset the STFT object
     stft.reset()
 
 
