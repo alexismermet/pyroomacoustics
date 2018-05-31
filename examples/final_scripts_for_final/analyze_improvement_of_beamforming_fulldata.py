@@ -1,6 +1,5 @@
 '''
-example showing the improvement of single_noise_channel_removal on the full GoogleSpeechCommand
-Dataset.
+Example showing the improvement of beamforming on the full GoogleSpeechCommand Dataset.
 '''
 
 import numpy as np
@@ -67,7 +66,7 @@ def label_wav(wav,labels,graph,word):
     index = labels_list.index(word)
     return run_graph(wav_data,labels_list,index)
 
-if __name__ == '__main__':
+if __name__ == '__main_':
 
 	'''
 	User parameter for synthetizing the signal
@@ -81,11 +80,30 @@ if __name__ == '__main__':
 	# the number of mic you want to place in the room
 	number_mics = 3
 	# your microphones' array containing the position of your number_mics microphones you are going to use in the rooms
-	mic_array = np.array([[2, 1.5, 2]])
+	mic_array = np.array([2, 1.5, 2])
 	# position of the sound source
 	source = [2,3.1,2]
 	# position of the noise source
 	noise_source = [4,2,1.5]
+
+	# creation of the mic_array in a special way such that we can use beamforming
+	# shape of the array
+	shape = 'Circular'
+	#position of the center mic
+	mic = np.array([2,1.5]) 
+	# radius of the array
+	d = 0.2
+	# the angle from horizontal
+	phi = 0. 
+	# creation of the array
+	if shape is 'Circular':
+		R = pra.circular_2D_array(mic, number_mics, phi , radius=d) 
+	else:
+		R = pra.linear_2D_array(mic, number_mics, phi, d)
+	R = np.concatenate((R, np.array(mic, ndmin=2).T), axis=1)
+	# FFT length
+	N = 1024
+
 	# desired basis words. Here we have all the possible words in our model
 	desired_word = ['yes','no','up','down','left','right','on','off','stop','go']
 	# subest desired per word
@@ -95,30 +113,9 @@ if __name__ == '__main__':
 	#choose your graph file
 	graph_file = "my_frozen_graph.pb"
 	# destination directory to write your new samples
-	dest_dir = 'output_final_single_noise_removal_full'
+	dest_dir = 'output_final_beamforming_full'
 	if not os.path.exists(dest_dir):
 		os.makedirs(dest_dir)
-
-	'''
-	Parameters of the algortihm
-	'''
-	# the reduction criteria of the algorithm in dB
-	db_reduc = 10
-	# lookback this main samples for the noise floor estimate
-	lookback = 10  
-	# the lenght of our FFT
-	fft_len = 512
-	# value of the coefficient used to do the transition between the 2 values we are choosing from in the algorithm
-	beta = 30
-	alpha = 6.9
-	# number of bins we're gonna use for our FFT
-	n_fft_bins = fft_len//2 + 1 
-	# array containing our powers that we use in our algorithm (we're gonna take the max value from this array)
-	P_prev = np.zeros((n_fft_bins, lookback))
-	# minmal value that our filter can take
-	Gmin = 10**(-db_reduc/20)
-	# our filter at the start: an empty array
-	G = np.zeros(n_fft_bins)
 
 	'''
 	Creating the Dataset object with all the value for the desired words
@@ -142,56 +139,12 @@ if __name__ == '__main__':
 	'''
 	Create new samples using Pyroomacoustics as in example how_to_synthesize_a_signal.py
 	'''
-	# creation of the noisy signal for each SNR values
+	# creation of the noisy signal and the beamformed signal for each SNR values
 	noisy_signal = {}
+	beamformed_signal = {}
 	for s in speech_samps:
-		noisy_signal[s] = utils.modify_input_wav_multiple_mics(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,mic_array,source,noise_source)[:,0,:]
-
-	'''
-	Make an STFT object (these class are already implemented in Pyroomacoustics and have example showing how to use them)
-	'''
-	hop = fft_len//2
-	window = pra.hann(fft_len, flag='asymmetric', length='full') 
-	stft = pra.realtime.STFT(fft_len, hop=hop, analysis_window=window, channels=1)
-
-	'''
-	Processing of our noisy signals
-	'''
-	# we run the algorithm for all of our signal for all possible SNR values.
-	# we create the map that will contain our newly computed signals
-	processed_audio_map = {}
-	for s in speech_samps:
-		processed_audio_map[s] = np.zeros(noisy_signal[s].shape)
-
-	for s in speech_samps:
-		print('processing ...')
-		for i, snr in enumerate(snr_vals):
-			n = 0
-			while len(noisy_signal[s][i]) - n > hop:
-				# go to frequency domain
-				stft.analysis(noisy_signal[s][i][n:(n+hop)])
-				X = stft.X
-
-				# estimate of signal + noise at current time
-				P_sn = np.real(np.conj(X)*X)    
-
-				# estimate of noise level
-				P_prev[:,-1] = P_sn
-				P_n = np.min(P_prev, axis=1)
-
-				# compute mask
-				for k in range(n_fft_bins):
-					G[k] = max((max(P_sn[k] - beta*P_n[k],0)/P_sn[k])**alpha, Gmin)
-
-				# back to time domain
-				processed_audio_map[s][i][n:n+hop] = stft.synthesis(G*X)
-
-				# update step
-				P_prev = np.roll(P_prev, -1, axis=1)
-				n += hop
-		# we reset the STFT object for the future use of the algorithm
-		stft.reset()
-		P_prev = np.zeros((n_fft_bins, lookback))
+		noisy_signal[s] = utils.modify_input_wav_multiple_mics(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,np.array([mic_array]),source,noise_source)[:,0,:]
+		beamformed_signal[s] = utils.modify_input_wav_beamforming(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,R,pos_source,pos_noise,N)
 
 	'''
 	Write to WAV and labelling of the samples.
@@ -214,7 +167,7 @@ if __name__ == '__main__':
 			# destination of the original siganl
 			dest_ori = os.path.join(dest_dir,"original_signal%d%s_snr_db_%d" %(idx,word,snr))
 			# noisy processed signal
-			noisy_pro = pra.normalize(processed_audio_map[s][i], bits=16).astype(np.int16)
+			noisy_pro = pra.normalize(beamformed_signal[s][i], bits=16).astype(np.int16)
 			wavfile.write(dest_pro,16000,noisy_pro)
 			# noisy original signal
 			noisy_ori = pra.normalize(noisy_signal[s][i], bits=16).astype(np.int16)

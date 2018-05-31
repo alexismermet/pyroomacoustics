@@ -100,9 +100,9 @@ if __name__ =='__main__':
 	else:
 		R = pra.linear_2D_array(mic, number_mics, phi, d)
 	R = np.concatenate((R, np.array(mic, ndmin=2).T), axis=1)
-    
 	# FFT length
 	N = 1024
+	
 	# desired basis word(s) (can also be a list)
 	desired_word = 'yes'
 	#choose your label file
