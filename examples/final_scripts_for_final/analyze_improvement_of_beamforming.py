@@ -161,13 +161,13 @@ if __name__ =='__main__':
 	for i, snr in enumerate(snr_vals):
 		print("SNR / %f dB" %snr)
 		dest = os.path.join(dest_dir, "beamformed_signal_snr_db_%d.wav" %snr)
-		signal = noisy_signal_beamformed[i].astype(np.int16)
+		signal = pra.normalize(noisy_signal_beamformed[i], bits=16).astype(np.int16)
 		wavfile.write(dest,16000,signal)
 		score_processing[i] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
 
 		dest = os.path.join(dest_dir,"original_signal_snr_db_%d.wav" %(snr))
-		signal = noisy_signal_flatten[i].astype(np.int16)
-		wavfile.write(dest,16000,signal)
+		signal = pra.normalize(noisy_signal_flatten[i], bits=16).astype(np.int16)
+		wavfile.write(des(t,16000,signal)
 		score_original[i] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
 		print()
 

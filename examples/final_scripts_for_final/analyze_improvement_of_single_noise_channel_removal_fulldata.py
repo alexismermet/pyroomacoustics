@@ -77,7 +77,7 @@ if __name__ == '__main__':
 	# the dimension of your room
 	room_dim = [5,4,6]
 	# the SNR values in dB we use to create the different samples
-	snr_vals = np.arange(60,-25,-5)
+	snr_vals = np.arange(60,-10,-10)
 	# the number of mic you want to place in the room
 	number_mics = 3
 	# your microphones' array containing the position of your number_mics microphones you are going to use in the rooms
@@ -87,9 +87,9 @@ if __name__ == '__main__':
 	# position of the noise source
 	noise_source = [4,2,1.5]
 	# desired basis words. Here we have all the possible words in our model
-	desired_word = ['yes','no','up','down','left','right','on','off','stop','go']
+	desired_word = ['stop']
 	# subest desired per word
-	sub = 2
+	sub = 25
 	#choose your label file
 	labels_file = "conv_labels.txt"
 	#choose your graph file
@@ -238,14 +238,12 @@ if __name__ == '__main__':
 		score_map_processing_avg[w] = np.average(score_map_processing[w], axis=0)
 
 	# plotting of the result
-	plt.title('Classification of %s for %d given samples' %(desired_word,sub))
-	plt.xlabel('SNR values [dB]')
-	plt.ylabel('%% confidence')
 	for w in desired_word:
-		plt.figure()
 		plt.subplot(2,1,1)
 		plt.plot(snr_vals, score_map_processing_avg[w], label='processed_signal_for_%s' %w)
 		plt.plot(snr_vals, score_map_original_avg[w], label='original_signal_for_%s' %w)
+		plt.xlabel('SNR values [dB]')
+		plt.ylabel('%% confidence')
 		plt.legend()
 	plt.grid()
 	plt.show()

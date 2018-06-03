@@ -66,7 +66,7 @@ def label_wav(wav,labels,graph,word):
     index = labels_list.index(word)
     return run_graph(wav_data,labels_list,index)
 
-if __name__ == '__main_':
+if __name__ == '__main__':
 
 	'''
 	User parameter for synthetizing the signal
@@ -74,25 +74,23 @@ if __name__ == '__main_':
 	# how many order of reflection/refraction of the signal we consider in our rooms
 	max_order = 3
 	# the dimension of your room
-	room_dim = [5,4,6]
+	room_dim = [4,6]
 	# the SNR values in dB we use to create the different samples
 	snr_vals = np.arange(60,-25,-5)
 	# the number of mic you want to place in the room
 	number_mics = 3
-	# your microphones' array containing the position of your number_mics microphones you are going to use in the rooms
-	mic_array = np.array([2, 1.5, 2])
 	# position of the sound source
-	source = [2,3.1,2]
+	source = [2,4.5]
 	# position of the noise source
-	noise_source = [4,2,1.5]
+	noise_source = [2.8,4.3]
 
 	# creation of the mic_array in a special way such that we can use beamforming
 	# shape of the array
 	shape = 'Circular'
 	#position of the center mic
-	mic = np.array([2,1.5]) 
+	mic = np.array([2,1.5])
 	# radius of the array
-	d = 0.2
+	d = 0.8
 	# the angle from horizontal
 	phi = 0. 
 	# creation of the array
@@ -105,9 +103,9 @@ if __name__ == '__main_':
 	N = 1024
 
 	# desired basis words. Here we have all the possible words in our model
-	desired_word = ['yes','no','up','down','left','right','on','off','stop','go']
+	desired_word = ['yes']
 	# subest desired per word
-	sub = 2
+	sub = 25
 	#choose your label file
 	labels_file = "conv_labels.txt"
 	#choose your graph file
@@ -143,8 +141,8 @@ if __name__ == '__main_':
 	noisy_signal = {}
 	beamformed_signal = {}
 	for s in speech_samps:
-		noisy_signal[s] = utils.modify_input_wav_multiple_mics(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,np.array([mic_array]),source,noise_source)[:,0,:]
-		beamformed_signal[s] = utils.modify_input_wav_beamforming(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,R,pos_source,pos_noise,N)
+		noisy_signal[s] = utils.modify_input_wav_multiple_mics(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,np.array([mic]),source,noise_source)[:,0,:]
+		beamformed_signal[s] = utils.modify_input_wav_beamforming(speech_file_location[s],noise_file_location,room_dim,max_order,snr_vals,R,source,noise_source,N)
 
 	'''
 	Write to WAV and labelling of the samples.
@@ -191,14 +189,12 @@ if __name__ == '__main_':
 		score_map_processing_avg[w] = np.average(score_map_processing[w], axis=0)
 
 	# plotting of the result
-	plt.title('Classification of %s for %d given samples' %(desired_word,sub))
-	plt.xlabel('SNR values [dB]')
-	plt.ylabel('%% confidence')
 	for w in desired_word:
-		plt.figure()
 		plt.subplot(2,1,1)
 		plt.plot(snr_vals, score_map_processing_avg[w], label='processed_signal_for_%s' %w)
 		plt.plot(snr_vals, score_map_original_avg[w], label='original_signal_for_%s' %w)
+		plt.xlabel('SNR values [dB]')
+		plt.ylabel('%% confidence')
 		plt.legend()
 	plt.grid()
 	plt.show()

@@ -7,6 +7,7 @@
 \usepackage[section]{placeins}
 \usepackage{float}
 \usepackage{url}
+\usepackage[font=small]{caption}
 \author{MERMET Alexis}
 \title{Bachelor Project: Augmenting Pyrooacooustics with machine learning utilities}
 \date{June 8, 2018}
@@ -33,7 +34,7 @@ Before the start of this project, we could find three main classes in Pyroomacou
 In the Room class you create an object that is a collection of Wall objects, a MicrophoneArray and a list of SoundSource(s). It can be either 2D or 3D.
 A SoundSource object has as attributes the location of the source itself and also all of its images sources. In general we create this list directly in the Room object that contains the source.
 Finally the MicrophoneArray class consist of an array of microphone locations together with a sampling frequency.
-\begin{figure}
+\begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\linewidth]{rapport1}
 	\caption[Example of a room in Pyroomacoustic]{Example of a room in Pyroomacoustic}
@@ -63,12 +64,12 @@ When our image is processed we can then fed it into a  multi-layer convolutional
 Now we have a neural network ready to label our words in Pyroomacoustics. It took between 16h-20h to train it and we're going to look at his accuracy later on in this report.
 
 
-\section{The GoogleSpeechCommand Dataset: Basic informations}
+\section{The GoogleSpeechCommands Dataset: Basic informations}
 \hspace*{0.6cm}
 Created by the tensorflow and AIY teams, the speech command dataset is used to add training and inference in tensorflow. The dataset contains 65,000 one-second long sound of 30 short words, spoke by "thousands of different people". This dataset is not fixed and will continue to increase with the contribution of users. It is designed to help an user to create is own basic voice recognition interface, with common words like 'yes', 'no', directions, etc...\\
 \begin{figure}
 	\centering
-	\includegraphics[width=0.5\linewidth]{rapport3}
+	\includegraphics[width=0.4\linewidth]{rapport3}
 	\caption{The different words our system is able to recognize}
 \end{figure}
 
@@ -93,10 +94,73 @@ Finally in this project we don't use the SNR under this form cause it is not rea
 In this section we are going to talk about the different algorithm we used in this project.
 \subsection{Single Noise Channel Removal}
 \hspace*{0.6cm}
-The Single Noise Channel Removal is used to suppress the noise. We consider a noisy 
-\subsection{Beamforming: Rake Delay and Sum Weights}
+The Single Noise Channel Removal is used to suppress the noise. We consider a noisy input signal x[n] that becomes X(k,i), once converted into the frequency domain using the STFT (Short Time Fourier Transform). The noise suppressor removes the noise by applying a time-frequency-varying real-valued gain filter G(k,i) to X(k,i). We define this gain filter has follow:\\
+-When, at a given time and frequency, there is no noise, the gain filter has value 1.\\
+-When, at a given time and frequency, there is only noise, the gain filter has value G\textsubscript{min}.
+-When, at a given time and frequency, there is a mix of signal and noise, the gain filter has a value between G\textsubscript{min} and 1.\\
+\hspace*{0.6cm}
+For this algorithm, an estimation of the noise is needed, we have:
+ \[P(k,i) = E[|X(k,i)|^2]  \]
+and we need to compute a noise estimator, P\textsubscript{N}(k,i). There is two ways to compute it:\\
+1) if the noise is stationary: P\textsubscript{N}(k,i) = min P(k,i) over time.\\
+2) use a voice detector: P\textsubscript{N}(k,i) = P(k,i) during a silence period. \\
+so: 
+\[P\textsubscript{N}(k,i) = \min_{0 \eqslantless l \eqslantless k} P(k,i)\]
+Now we can define our Gain filter such that:
+\[ G(k,i) = \max[\frac{(P(k,i)- \beta*P\textsubscript{N}(k,i))^\alpha}{P(k,i)^\alpha}, G_{min}] \]
+where $\beta$ is an overestimation factor, often set to a value larger than one to ensure all noise is suppressed by a factor of $G_{min}$, and the exponent $\alpha$ controls the ransition behaviour of the gain filter between $G_{min}$ and one.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{rapport4}
+	\caption{STFT-based stationary noise suppressor (from the Audio Signal Processing and Virtual Acoustics books).}
+	\label{fig:rapport4}
+\end{figure}
+
+\subsection{Beamforming: Delay and Sum Weights}
+\hspace*{0.6cm}
+In this section we are going to talk about one of the easiest Beamforming algorithm. But first of all, the term Beamforming is used to talk about An ?intelligent? combination of the sensor signals to increase the SNR of the signal. Delay and Sum Weights also called Delay And Sum (DAS) is in fact what we have saw before hand in 2.3.\\
+If we consider an array of M sensors and define that the signal received at the sensor m is $x_m(t)$ then we define Y(t) such that:
+\[Y(t) = \sum_{m=0}^{M-1}{w\textsubscript{m}* x\textsubscript{m}(t-\Delta\textsubscript{m})}\]
+with w\textsubscript{m} being the weight corresponding to the signal x\textsubscript{m} and $\Delta$\textsubscript{m} being a delay chosen to maximize the array's sensitivity to waves propagating from a particular direction.
+
 \chapter{Implementation}
-\section{The GoogleSpeechCommand Dataset}
+\section{The GoogleSpeechCommands Dataset}
+\hspace*{0.6cm}
+The "GoogleSpeechCommands" dataset wrapper was created has a subclass of the "Dataset" class that was already implemented in Pyroomacoustics. This class will load the Google Speech Commands Dataset in a structure that is convenient to be processed. It has four main attributes: the directory where the dataset is located, the "basedir". A dictionary whose keys are word in the dataset. The values are the number of occurrences for that particular word. It is called "sizebysamples". A list of subdirectories in "basedir", where each sound type is the name of a subdirectory, called "subdirs". And finally "classes",the list of all sounds, same as the keys of sizebysamples.\\
+\\
+\hspace*{0.6cm}
+There are multiple functions in this class and we're going to review them quickly to give you a general idea of what is possible because of the model created in Pyroomacoustics.\\
+\\
+\hspace*{0.6cm}
+1) we have the "init" function that is the builder of our class. When creating a structure containing the Google Speech Command dataset, the user can choose if he wants to download it or not. But he can also choose if he wants to construct just a subset of the all dataset at the start.\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.95\linewidth]{Rapport5}
+	\caption{The "init" function of a GoogleSpeechCommands structure}
+	\label{fig:rapport5}
+\end{figure}
+\hspace*{0.6cm}
+\\
+2) The "build corpus" function that allows the user to build the corpus with some filters, as for example the list of the desired words to be taken from the corpus.\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\linewidth]{Rapport6}
+	\caption{The "build corpus" function from the wrapper}
+	\label{fig:rapport6}
+\end{figure}
+\\
+\hspace*{0.6cm}
+3) The "filter" function that allows the user to filter the dataset and select samples that match the criterias provided.\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.4\linewidth]{Rapport7}
+	\caption{The "filter" function from the wrapper}
+	\label{fig:rapport7}
+\end{figure}
+\\
+\hspace*{0.6cm}
+Now that we talk about the wrapper, we need to present also the "GoogleSample" class that is inheriting from the class "AudioSample" created beforehand in Pyroomacoustics. This class allows the user to create an audio object to print it in a nice way and also to plot the corresponding spectrogram. 
+
 \section{How to label a file?}
 \section{How to synthesize noisy signals}
 \section{The algorithms}
@@ -132,5 +196,18 @@ The Single Noise Channel Removal is used to suppress the noise. We consider a no
 	\textit{Array gain and reduction of self-noise}, 
 	Norsonic AS, Oslo, Norway,
 	2016
+\\
+\\
+5) Christof Faller and Dirk Schröder,
+	\textit{Audio Signal Processing and Virtual Acoustics},
+	9 September 2015,
+\\
+\\
+6) 10.1109/ICASSP.2015.7178030,
+	Robin Scheibler, Ivan Dokmanic, and Martin Vetterli, 
+	\textit{Raking Echoes in the time domain }, 
+	School of Computer and Communication Sciences
+	Ecole Poly technique Federale de Lausanne (EPFL), CH-IOI5 Lausanne, Switzerland,
+	2015
 
 \end{document}
