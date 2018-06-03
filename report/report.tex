@@ -8,8 +8,14 @@
 \usepackage{float}
 \usepackage{url}
 \usepackage[font=small]{caption}
+\providecommand{\tightlist}{%
+	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% todo notes
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
 \author{MERMET Alexis}
-\title{Bachelor Project: Augmenting Pyrooacooustics with machine learning utilities}
+\title{Bachelor Project: Augmenting \textit{pyroomacoustics} with machine learning utilities}
 \date{June 8, 2018}
 
 \begin{document}
@@ -21,34 +27,43 @@
 \section{Objectives of the project}
 \hspace*{0.6cm}
 
-During this project, we want to implement new functionalities to the already existing python library, Pyroomacoustics. These functionalities involve machine learning. To this we also have to create wrappers to popular speech datasets as the GoogleSpeechCommand dataset that we will see later. Finally we want to test some signal processing algorithms with a trained neural network.
-\section{What is Pyroomacousticsc?}
+\todo{can you look into using bibtex? so that you can cite reference directly in the paper.}
+
+During this project, we want to implement new functionalities to the already existing Python library, \textit{pyroomacoustics}\todo{change mentions of \textit{pyroomacoustics} to this style and check for typos!}. These functionalities include a wrapper to Google's Speech Commands Dataset\todo{add reference here}, utilities for augmenting  datasets with the already-available room impulse response (RIR) generator, and scripts for evaluating the performance of single and multi-microphone processing for speaker recognition against a pre-trained model. 
+
+\section{What is \textit{pyroomacoustics}?}
 
 \hspace*{0.6cm}
-First of all Pyroomacoustics is a library allowing us to make audio room simulation  and also apply array processing algorithm in Python. Created at the EPFL by Robin Scheibler, Eric Bezzam and Ivan Dokmanic, this library wants to be an "intuitive python oriented interface to quickly construct different simulation scenarios involving multiple sound sources and microphones in 2D or 3D rooms".\\
-\\
+First of all Pyroomacoustics is a library allowing us to make audio room simulation  and also apply array processing algorithm in Python. Developed by former and current EPFL undergraduate and graduate students, the goal of this library is to aid in ``the rapid development and testing of audio array processing algorithms.'' There are three core components:
+\begin{enumerate}
+	\tightlist
+	\item Object-oriented interface in Python for constructing 2D and 3D simulation scenarios;
+	\item A fast C implementation of the image source model for room impulse response (RIR) generation;
+	\item Reference implementations of popular algorithms for beamforming, direction finding, and adaptive filtering.
+\end{enumerate} 
 \hspace*{0.6cm} 
-Before the start of this project, we could find three main classes in Pyroomacoustic: The Room class, the SoundSource class and the MicrophoneArray class. Quickly after I began working, Robin Schleiber also added a Dataset class that helped me to start creating a wrapper.\\
+Before the start of this project, we could find three main classes\todo{there's at least two more for DOA and adaptive filtering} in Pyroomacoustic: The Room class, the SoundSource class and the MicrophoneArray class. Quickly after I began working, Robin Schleiber also added a Dataset class that helped me to start creating a wrapper for Google's Speech Commands Dataset (explained below).\\
 \\
 \hspace{0.6cm}
-In the Room class you create an object that is a collection of Wall objects, a MicrophoneArray and a list of SoundSource(s). It can be either 2D or 3D.
+With the Room class, you create an object that is a collection of Wall objects, a MicrophoneArray and a list of SoundSource(s). It can be either 2D or 3D.
 A SoundSource object has as attributes the location of the source itself and also all of its images sources. In general we create this list directly in the Room object that contains the source.
 Finally the MicrophoneArray class consist of an array of microphone locations together with a sampling frequency.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\linewidth]{rapport1}
-	\caption[Example of a room in Pyroomacoustic]{Example of a room in Pyroomacoustic}
+	\caption[Example of a room in Pyroomacoustic]{Example of a room in Pyroomacoustic.}
 \end{figure}
 
 \section{What is Tensorflow?}
 \hspace*{0.6cm}
-As they say on their website, Tensorflow is an "open source software library for high performance numerical computation". We followed a Tensorflow tutorial called "Simple Audio Recognition" to create the neural networks we used during the all project (we are going to explain how it was created in 2.1). We also have reimplement some of their functions to be able to label our sound in the way we want (see 3.2).
+\todo{references!}
+As they say on their website, Tensorflow is an "open source software library for high performance numerical computation". We followed a Tensorflow tutorial called "Simple Audio Recognition" to create the neural networks we used during the all project (we are going to explain how it was created in 2.1). We have also reimplemented some of their functions to be able to label sounds we have modified through processing (see~\ref{sec:label_file}).\todo{you can make links between section, images, etc with the ``label'' and ``ref'' tags}
 \chapter{Theoretical knowledge}
 \section{Training the Neural Network}
 \hspace*{0.6cm}
-In this section we're going to talk about how the neural network was trained. First off all, we download the GoogleSpeechCommand dataset since we use it: to train our network but also afterwards to test the efficiency of our algorithms. This model is considered really simple but is also "quick to train and easy to understand".\\
+In this section we're going to talk about how the neural network was trained. First off all, we download the GoogleSpeechCommand\todo{this is not the official name so I would change to referring it as ``Google's Speech Commands dataset''. ``GoogleSpeechCommand'' is the name we use for our wrapper} dataset since we need it to train our network but to test the efficiency of our algorithms. According to the tutorial, this model is considered really simple but is also ``quick to train and easy to understand".\\
 \hspace*{0.6cm}
-This model works as a convolutional network (in fact this model is similar to the one you can use to do some image recognition). First of all a window of time is defined and the audio signal is converted to an image into that window. This is done by "grouping the incoming audio samples into short segments and calculating the strength of the frequencies across a set of bands". All the frequency strengths of a given segment will then be treated as a vector of values. These vectors are then ordered according to the time, forming a two-dimensional array that we will treat as as \underline{spectrogram}\\
+This model works as a convolutional network (in fact this model is similar to the one you can use to do some image recognition). First of all a window of time is defined and the audio signal is converted to an image with the Short Time Fourier Transform (STFT), i.e.\ a spectrogram. This is done by \todo{change beginning quotes to ``}"grouping the incoming audio samples into short segments and calculating the strength of the frequencies across a set of bands". All the frequency strengths of a given segment will then be treated as a vector of values. These vectors are then ordered according to the time, forming the two-dimensional array known as a ``spectrogram''\\
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{Rapport2}
@@ -56,22 +71,22 @@ This model works as a convolutional network (in fact this model is similar to th
 \end{figure}
 
 \hspace*{0.6cm}
-In the figure 2.1, time is increasing from top to bottom and frequencies from left to right. We can also different part of the sound that are probably specific part of it (like a syllable in our case of word).\\
+In the figure 2.1, time is increasing from top to bottom and frequencies from left to right. We can also different part of the sound that are probably specific part of it (like a syllable in our case of word).\todo{this last sentence is unclear...}\\
 \hspace*{0.6cm}
-When our image is processed we can then fed it into a  multi-layer convolutional neural network, with a fully-connected layer followed by a softmax at the end.\\
-\\
-\hspace*{0.6cm}
-Now we have a neural network ready to label our words in Pyroomacoustics. It took between 16h-20h to train it and we're going to look at his accuracy later on in this report.
+After our ``image'' is created we can feed it into a multi-layer convolutional neural network (CNN), with a fully-connected layer followed by a softmax at the end. With a large amount of images and associated labels, we can train our network to classify different words. It took between 16h-20h to train the model and we're going to look at its accuracy later on in this report.
 
 
 \section{The GoogleSpeechCommands Dataset: Basic informations}
 \hspace*{0.6cm}
-Created by the tensorflow and AIY teams, the speech command dataset is used to add training and inference in tensorflow. The dataset contains 65,000 one-second long sound of 30 short words, spoke by "thousands of different people". This dataset is not fixed and will continue to increase with the contribution of users. It is designed to help an user to create is own basic voice recognition interface, with common words like 'yes', 'no', directions, etc...\\
+Created by the \todo{be consistent with how you mention TensorFlow}tensorflow and AIY teams, the speech command dataset is used to add training and inference in tensorflow. The dataset contains 65,000 one-second long sound of 30 short words, spoke by "thousands of different people". This dataset is not fixed and will continue to increase with the contribution of users. It is designed to help a user to create his own basic voice recognition interface, with common words like `yes', `no', directions, etc...\\
+
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.4\linewidth]{rapport3}
 	\caption{The different words our system is able to recognize}
 \end{figure}
+\todo{Figure 2.2 is bit blurry, perhaps you can list the words separately}
 
 \section{Some Signal Processing concepts}
 \hspace*{0.6cm}
@@ -162,6 +177,7 @@ There are multiple functions in this class and we're going to review them quickl
 Now that we talk about the wrapper, we need to present also the "GoogleSample" class that is inheriting from the class "AudioSample" created beforehand in Pyroomacoustics. This class allows the user to create an audio object to print it in a nice way and also to plot the corresponding spectrogram. 
 
 \section{How to label a file?}
+\label{sec:label_file}
 \section{How to synthesize noisy signals}
 \section{The algorithms}
 \chapter{Results}
