@@ -88,42 +88,60 @@ Created by the \todo{be consistent with how you mention TensorFlow}tensorflow an
 \end{figure}
 \todo{Figure 2.2 is bit blurry, perhaps you can list the words separately}
 
-\section{Some Signal Processing concepts}
+\section{Signal processing concepts}
 \hspace*{0.6cm}
-In this section we're going to talk about one of the most important concept of signal processing we used during this project: the Signal to Noise Ratio (SNR) and everything that comes from it. Even though this concept is quite simple and well known, we will talk about it cause we used it nearly everywhere as you'll see later when we will talk about the implementation (Chapter 4).\\
+In this section we're going to talk about one of the most important concept of signal processing we used during this project: the signal-to-noise ratio (SNR). Even though this concept is quite simple and well known, we will talk about it because we it is important in our data augmentation and analysis when we will talk about the implementation (Chapter 4).\\
 \hspace*{0.6cm}
-First of all, for a single sensor, considering the signal y(t) = s(t) + n(t), with s(t) being the sound of interest and n(t) being the noise, the Signal to Noise Ratio is defined as the sound power over the noise power.
-\[SNR\textsubscript{sensor} = \dfrac{E[|s(t)^2|]}{E[|n(t)^2|]} = \dfrac{\sigma\textsubscript{s}^2}{\sigma\textsubscript{n}^2}  \] 
-with $\sigma\textsubscript{s}^2$ being the power of the sound of interest and $\sigma\textsubscript{n}^2$ being the power of the noise.\\
-Then if we know consider an array of M sensors and define that the signal received at the sensor m is y\textsubscript{m}(t) = s\textsubscript{m}(t) + n\textsubscript{m}(t). We define the signal for the all array Z(t) such that:
-\[Z(t) = \sum_{m=0}^{M-1}{w\textsubscript{m}* y\textsubscript{m}(t-\Delta\textsubscript{m})} = Z\textsubscript{s}(t) + Z\textsubscript{n}(t) \]
-with w\textsubscript{m} being the weight corresponding to the signal y\textsubscript{m} and $\Delta$\textsubscript{m} being a delay that represents the fact that the sound doesn't arrive at the same moment to each sensor.\\
-Now we can write that the SNR value of our signal Z(t) is:
-\[SNR\textsubscript{array} = \dfrac{E[|Z\textsubscript{s}(t)^2|]}{E[|Z\textsubscript{n}(t)^2|]} = \dfrac{|\sum_{m}w\textsubscript{m}|^2*\sigma\textsubscript{s}^2} {\sum_{m}|w\textsubscript{m}|^2*\sigma\textsubscript{n}^2} \] 
+First of all, for a single sensor, considering the signal $ y(t) = s(t) + n(t) $, with $ s(t) $ being the sound of interest and $ n(t) $ being the noise, the SNR is defined as the sound power over the noise power.
+\begin{equation}
+SNR_{sensor} = \dfrac{E[|s(t)^2|]}{E[|n(t)^2|]} = \dfrac{\sigma_{s}^2}{\sigma_{n}^2} 
+\end{equation}
+with $\sigma_{s}^2$ being the power of the sound of interest and $\sigma_{n}^2$ being the power of the noise.\\
+Then if we consider an array of $ M $ sensors and define that the signal received at the sensor $ m $ is $ y_{m}(t) = s_{m}(t) + n_{m}(t) $. We define the signal for the whole array $ Z(t) $ such that:\todo{not exactly...what you have below is a beamformed signal. the SNR should be relatively the same for each microphone. you should talk about the beamformed SNR in the beamforming section}
+\begin{equation}
+Z(t) = \sum_{m=0}^{M-1}{w_{m}* y_{m}(t-\Delta_{m})} = Z_{s}(t) + Z_{n}(t) 
+\end{equation}
+with $ w_{m} $ being the weight corresponding to the signal $ y_{m} $ and $\Delta_{m}$ being a delay that to time-align the separate microphones as the sound does not arrive at the same moment to each sensor.\\
+Now we can write the SNR of our beamformed signal $ Z(t) $ as:
+\begin{equation}
+SNR_{array} = \dfrac{E[|Z_{s}(t)^2|]}{E[|Z_{n}(t)^2|]} = \dfrac{|\sum_{m}w_{m}|^2 \sigma_{s}^2} {\sum_{m}|w_{m}|^2 \sigma_{n}^2} 
+\end{equation}
 \hspace*{0.6cm}
-Finally in this project we don't use the SNR under this form cause it is not really intelligible and easy to use. So we convert it into decibels (dB) such that we know have:
-\[ SNR\textsubscript{dB} = 10\log\textsubscript{10}{\dfrac{\sigma\textsubscript{s}^2}{\sigma\textsubscript{n}^2}} \]
+Finally in this project we don't use the SNR under this form cause it is not really intelligible and easy to use. So we convert it into decibels (dB) such that we now have:\todo{perhaps you can explain why we do 20log10 or 10log10?}
+\begin{equation}
+SNR_{dB} = 10\log_{10}{\dfrac{\sigma_{s}^2}{\sigma_{n}^2}} 
+\end{equation}
 
-\section{The algorithms}
+\section{Algorithms}
 \hspace*{0.6cm}
 In this section we are going to talk about the different algorithm we used in this project.
-\subsection{Single Noise Channel Removal}
+\subsection{Single Noise Channel Removal (SCNR)}
 \hspace*{0.6cm}
-The Single Noise Channel Removal is used to suppress the noise. We consider a noisy input signal x[n] that becomes X(k,i), once converted into the frequency domain using the STFT (Short Time Fourier Transform). The noise suppressor removes the noise by applying a time-frequency-varying real-valued gain filter G(k,i) to X(k,i). We define this gain filter has follow:\\
--When, at a given time and frequency, there is no noise, the gain filter has value 1.\\
--When, at a given time and frequency, there is only noise, the gain filter has value G\textsubscript{min}.
--When, at a given time and frequency, there is a mix of signal and noise, the gain filter has a value between G\textsubscript{min} and 1.\\
-\hspace*{0.6cm}
+SCNR is used to suppress the noise, stationary noise in particular. We consider a noisy input signal $ x[n] $ that becomes $ X(k,i) $, once converted into the frequency domain using the STFT (Short Time Fourier Transform)\todo{what are k and i?}. The noise suppressor removes the noise by applying a time-frequency-varying real-valued gain filter $ G(k,i) $ to $ X(k,i) $. We define this gain filter has follow:
+\begin{itemize}
+	\tightlist
+	\item If there is no noise at a given time and frequency, the gain filter has value 1.
+	\item If there is only noise at a given time and frequency, the gain filter has value $ G_{min} $.
+	\item If there is a mix of signal and noise at a given time and frequency, the gain filter has a value within $ [G_{min}, 1] $.
+\end{itemize}
 For this algorithm, an estimation of the noise is needed, we have:
  \[P(k,i) = E[|X(k,i)|^2]  \]
-and we need to compute a noise estimator, P\textsubscript{N}(k,i). There is two ways to compute it:\\
-1) if the noise is stationary: P\textsubscript{N}(k,i) = min P(k,i) over time.\\
-2) use a voice detector: P\textsubscript{N}(k,i) = P(k,i) during a silence period. \\
-so: 
-\[P\textsubscript{N}(k,i) = \min_{0 \eqslantless l \eqslantless k} P(k,i)\]
-Now we can define our Gain filter such that:
-\[ G(k,i) = \max[\frac{(P(k,i)- \beta*P\textsubscript{N}(k,i))^\alpha}{P(k,i)^\alpha}, G_{min}] \]
-where $\beta$ is an overestimation factor, often set to a value larger than one to ensure all noise is suppressed by a factor of $G_{min}$, and the exponent $\alpha$ controls the ransition behaviour of the gain filter between $G_{min}$ and one.
+as the estimate of the instantaneous signal + noise, and we need to compute a noise estimate, $ P_{N}(k,i) $. There is two ways to compute it:
+\begin{enumerate}
+	\tightlist
+	\item If the noise is stationary: $ P_{N}(k,i) = \min P(k,i) $ over some past period of time.
+	\item Use a voice detector: $ P_{N}(k,i) = P(k,i) $ during a silence period.
+\end{enumerate}
+In our implementation, we chose the first option, looking back for a fixed number of blocks $ B $:
+\begin{equation}
+P_{N}(k,i) = \min_{[i- B, \hspace{0.05cm}i]} P(k,i)
+\end{equation} 
+
+Now we can define our gain filter such that:
+\begin{equation}
+G(k,i) = \max[\frac{(P(k,i)- \beta P_{N}(k,i))^\alpha}{P(k,i)^\alpha}, G_{min}]
+\end{equation}
+where $\beta$ is an overestimation factor, often set to a value larger than one to ensure all noise is suppressed by a factor of $G_{min}$, and the exponent $\alpha$ controls the transition behavior of the gain filter between $G_{min}$ and 1.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.7\linewidth]{rapport4}
@@ -131,20 +149,22 @@ where $\beta$ is an overestimation factor, often set to a value larger than one 
 	\label{fig:rapport4}
 \end{figure}
 
-\subsection{Beamforming: Delay and Sum Weights}
+\subsection{Beamforming: Delay and Sum}
 \hspace*{0.6cm}
-In this section we are going to talk about one of the easiest Beamforming algorithm. But first of all, the term Beamforming is used to talk about An ?intelligent? combination of the sensor signals to increase the SNR of the signal. Delay and Sum Weights also called Delay And Sum (DAS) is in fact what we have saw before hand in 2.3.\\
-If we consider an array of M sensors and define that the signal received at the sensor m is $x_m(t)$ then we define Y(t) such that:
-\[Y(t) = \sum_{m=0}^{M-1}{w\textsubscript{m}* x\textsubscript{m}(t-\Delta\textsubscript{m})}\]
-with w\textsubscript{m} being the weight corresponding to the signal x\textsubscript{m} and $\Delta$\textsubscript{m} being a delay chosen to maximize the array's sensitivity to waves propagating from a particular direction.
+In this section, we are going to talk about one of the most basic \emph{beamforming} algorithm. Beamforming tries to perform an intelligent combination of the sensor signals in order to increase the SNR. Delay and Sum Weights also called Delay And Sum (DAS) is in fact what we have saw before hand in 2.3.\todo{I would move the discussion of the SNR of multiple microphone here to motivate why you take multiple measurements and time-align them}\\
+If we consider an array of $ M $ sensors and define that the signal received at the sensor $ m $ is $x_m(t)$ then we define $ y(t) $ such that\todo{keep lower-case for time and upper-case for frequency}:
+\begin{equation}
+y(t) = \sum_{m=0}^{M-1}{w_{m}* x_{m}(t-\Delta_{m})}
+\end{equation}
+with $ w_{m} $ corresponds to the weights for the $ m^{th} $ signal $ x_{m}  $and $\Delta_{m}$ corresponds to the delay chosen to maximize the array's sensitivity to waves propagating from a particular direction.\todo{what is $ w_m $ for DAS?}
 
 \chapter{Implementation}
 \section{The GoogleSpeechCommands Dataset}
 \hspace*{0.6cm}
-The "GoogleSpeechCommands" dataset wrapper was created has a subclass of the "Dataset" class that was already implemented in Pyroomacoustics. This class will load the Google Speech Commands Dataset in a structure that is convenient to be processed. It has four main attributes: the directory where the dataset is located, the "basedir". A dictionary whose keys are word in the dataset. The values are the number of occurrences for that particular word. It is called "sizebysamples". A list of subdirectories in "basedir", where each sound type is the name of a subdirectory, called "subdirs". And finally "classes",the list of all sounds, same as the keys of sizebysamples.\\
+The ``GoogleSpeechCommands" dataset wrapper was created as a subclass of the ``Dataset'' class that was already implemented in Pyroomacoustics. This class will load Google's Speech Commands Dataset in a structure that is convenient to be processed. It has four main attributes: the directory where the dataset is located, the "basedir". A dictionary whose keys are word in the dataset. The values are the number of occurrences for that particular word in a dictionary called "size\_by\_samples". A list of subdirectories in "basedir", where each sound type is the name of a subdirectory, called "subdirs". And finally "classes", the list of all sounds, which is the same as the keys of "size\_by\_samples".\\
 \\
 \hspace*{0.6cm}
-There are multiple functions in this class and we're going to review them quickly to give you a general idea of what is possible because of the model created in Pyroomacoustics.\\
+There are multiple functions in this class and we're going to review them quickly to give you a general idea of what is possible with this wrapper.\todo{use the ``enumerate'' environment for lists}\todo{checkout the ``listings'' package for code snippets}
 \\
 \hspace*{0.6cm}
 1) we have the "init" function that is the builder of our class. When creating a structure containing the Google Speech Command dataset, the user can choose if he wants to download it or not. But he can also choose if he wants to construct just a subset of the all dataset at the start.\\

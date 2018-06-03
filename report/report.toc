@@ -5,10 +5,10 @@
 \contentsline {chapter}{\numberline {2}Theoretical knowledge}{4}
 \contentsline {section}{\numberline {2.1}Training the Neural Network}{4}
 \contentsline {section}{\numberline {2.2}The GoogleSpeechCommands Dataset: Basic informations}{5}
-\contentsline {section}{\numberline {2.3}Some Signal Processing concepts}{6}
-\contentsline {section}{\numberline {2.4}The algorithms}{7}
-\contentsline {subsection}{\numberline {2.4.1}Single Noise Channel Removal}{7}
-\contentsline {subsection}{\numberline {2.4.2}Beamforming: Delay and Sum Weights}{8}
+\contentsline {section}{\numberline {2.3}Signal processing concepts}{6}
+\contentsline {section}{\numberline {2.4}Algorithms}{7}
+\contentsline {subsection}{\numberline {2.4.1}Single Noise Channel Removal (SCNR)}{7}
+\contentsline {subsection}{\numberline {2.4.2}Beamforming: Delay and Sum}{8}
 \contentsline {chapter}{\numberline {3}Implementation}{9}
 \contentsline {section}{\numberline {3.1}The GoogleSpeechCommands Dataset}{9}
 \contentsline {section}{\numberline {3.2}How to label a file?}{10}
