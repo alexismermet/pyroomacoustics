@@ -1,7 +1,7 @@
 \contentsline {chapter}{\numberline {1}Introduction}{2}
 \contentsline {section}{\numberline {1.1}Objectives of the project}{2}
 \contentsline {section}{\numberline {1.2}What is \textit {pyroomacoustics}?}{2}
-\contentsline {section}{\numberline {1.3}What is Tensorflow?}{3}
+\contentsline {section}{\numberline {1.3}What is TensorFlow?}{3}
 \contentsline {chapter}{\numberline {2}Theoretical knowledge}{4}
 \contentsline {section}{\numberline {2.1}Training the Neural Network}{4}
 \contentsline {section}{\numberline {2.2}The GoogleSpeechCommands Dataset: Basic informations}{5}
@@ -12,12 +12,12 @@
 \contentsline {chapter}{\numberline {3}Implementation}{9}
 \contentsline {section}{\numberline {3.1}The GoogleSpeechCommands Dataset}{9}
 \contentsline {section}{\numberline {3.2}How to label a file?}{10}
-\contentsline {section}{\numberline {3.3}How to synthesize noisy signals}{10}
-\contentsline {section}{\numberline {3.4}The algorithms}{10}
-\contentsline {chapter}{\numberline {4}Results}{11}
-\contentsline {section}{\numberline {4.1}Analyse improvement of Single Noise Channel Removal}{11}
-\contentsline {section}{\numberline {4.2}Analyse improvement of Beamforming}{11}
-\contentsline {chapter}{\numberline {5}Conclusion}{12}
-\contentsline {section}{\numberline {5.1}Where are we now?}{12}
-\contentsline {section}{\numberline {5.2}What's next?}{12}
-\contentsline {chapter}{\numberline {6}Bibliography}{13}
+\contentsline {section}{\numberline {3.3}How to synthesize noisy signals}{11}
+\contentsline {section}{\numberline {3.4}The algorithms}{12}
+\contentsline {chapter}{\numberline {4}Results}{14}
+\contentsline {section}{\numberline {4.1}Analyse improvement of Single Noise Channel Removal}{14}
+\contentsline {section}{\numberline {4.2}Analyse improvement of Beamforming}{15}
+\contentsline {chapter}{\numberline {5}Conclusion}{16}
+\contentsline {section}{\numberline {5.1}Where are we now?}{16}
+\contentsline {section}{\numberline {5.2}What's next?}{16}
+\contentsline {chapter}{\numberline {6}Bibliography}{17}

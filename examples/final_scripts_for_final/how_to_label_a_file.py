@@ -52,7 +52,7 @@ def run_graph(wav_data, labels, index, how_many_labels=3):
     return predictions[index]
 
 
-# main function used for labelling. We add a retrun to this function to recover the results.
+# main function used for labelling. We add a return to this function to recover the results.
 # this function labels wavfiles so you always need to create a wavfile of your sound to label it.
 def label_wav(wav,labels,graph,word):
 
