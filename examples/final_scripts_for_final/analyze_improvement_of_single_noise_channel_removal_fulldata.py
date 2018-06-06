@@ -77,7 +77,7 @@ if __name__ == '__main__':
 	# the dimension of your room
 	room_dim = [5,4,6]
 	# the SNR values in dB we use to create the different samples
-	snr_vals = np.arange(60,-10,-10)
+	snr_vals = np.arange(20,-20,-5)
 	# the number of mic you want to place in the room
 	number_mics = 3
 	# your microphones' array containing the position of your number_mics microphones you are going to use in the rooms

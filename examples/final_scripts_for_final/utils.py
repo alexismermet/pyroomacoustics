@@ -239,15 +239,15 @@ def modify_input_wav_beamforming(wav,noise,room_dim,max_order,snr_vals,mic_array
         raise ValueError('the length of the noise signal is inferior to the one of the audio signal !!')
     output_noise = output_noise[:len(output_signal)]
 
-    norm_fact = np.linalg.norm(output_noise)
+    norm_fact = np.linalg.norm(noise_reverb[-1])
     noise_normalized = output_noise / norm_fact
 
     #initilialize the array of noisy_signal
     noisy_signal = np.zeros([len(snr_vals),np.shape(output_signal)[0]])
 
     for i,snr in enumerate(snr_vals):
-        noise_std = np.linalg.norm(output_signal)/(10**(snr/20.))
-        final_noise = output_noise*noise_std
+        noise_std = np.linalg.norm(audio_reverb[-1])/(10**(snr/20.))
+        final_noise = noise_normalized*noise_std
         noisy_signal[i] = pra.normalize(pra.highpass(output_signal + final_noise,fs_s))
 
     return noisy_signal

@@ -76,9 +76,9 @@ if __name__ == '__main__':
 	# the dimension of your room
 	room_dim = [4,6]
 	# the SNR values in dB we use to create the different samples
-	snr_vals = np.arange(60,-25,-5)
+	snr_vals = np.arange(20,-20,-5)
 	# the number of mic you want to place in the room
-	number_mics = 3
+	number_mics = 6
 	# position of the sound source
 	source = [2,4.5]
 	# position of the noise source
@@ -90,9 +90,9 @@ if __name__ == '__main__':
 	#position of the center mic
 	mic = np.array([2,1.5])
 	# radius of the array
-	d = 0.8
+	d = 0.2
 	# the angle from horizontal
-	phi = 0. 
+	phi = 0.
 	# creation of the array
 	if shape is 'Circular':
 		R = pra.circular_2D_array(mic, number_mics, phi , radius=d) 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
 	N = 1024
 
 	# desired basis words. Here we have all the possible words in our model
-	desired_word = ['yes']
+	desired_word = ['no']
 	# subest desired per word
 	sub = 25
 	#choose your label file

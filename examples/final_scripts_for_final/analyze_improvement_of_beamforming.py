@@ -83,7 +83,7 @@ if __name__ =='__main__':
 	#position of the noise source
 	pos_noise = [2.8,4.3]
 	#the number of mic you want to place in the room
-	number_mics = 3
+	number_mics = 6
 	
 	# creation of the mic_array in a special way such that we can use beamforming
 	# shape of the array
@@ -91,7 +91,7 @@ if __name__ =='__main__':
 	#position of the center mic
 	mic = np.array([2,1.5]) 
 	# radius of the array
-	d = 0.2
+	d = 5
 	# the angle from horizontal
 	phi = 0. 
 	# creation of the array
@@ -167,7 +167,7 @@ if __name__ =='__main__':
 
 		dest = os.path.join(dest_dir,"original_signal_snr_db_%d.wav" %(snr))
 		signal = pra.normalize(noisy_signal_flatten[i], bits=16).astype(np.int16)
-		wavfile.write(des(t,16000,signal)
+		wavfile.write(dest,16000,signal)
 		score_original[i] = label_wav(dest, labels_file, graph_file, speech.meta.as_dict()['word'])
 		print()
 
