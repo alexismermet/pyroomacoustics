@@ -11,7 +11,8 @@
 \usepackage[font=small]{caption}
 \providecommand{\tightlist}{%
 	\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-
+\usepackage[backend=biber]{biblatex}
+\addbibresource{biblio.bib}
 % todo notes
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
@@ -27,10 +28,7 @@
 \chapter{Introduction}
 \section{Objectives of the project}
 \hspace*{0.6cm}
-
-\todo{can you look into using bibtex? so that you can cite reference directly in the paper.}
-
-During this project, we want to implement new functionalities to the already existing Python library, \textit{pyroomacoustics}. These functionalities include a wrapper to Google's Speech Commands Dataset\todo{add reference here}, utilities for augmenting  datasets with the already-available room impulse response (RIR) generator, and scripts for evaluating the performance of single and multi-microphone processing for speaker recognition against a pre-trained model.\\
+During this project, we want to implement new functionalities to the already existing Python library, \textit{pyroomacoustics}. These functionalities include a wrapper to Google's Speech Commands Dataset, utilities for augmenting  datasets with the already-available room impulse response (RIR) generator, and scripts for evaluating the performance of single and multi-microphone processing for speaker recognition against a pre-trained model.\\
 \\
 \hspace*{0.6cm}
 Before I start, I would like to thank Eric Bezzam for the help he gave me during all the semester, by meeting me every weeks and helping me really quick when I had problem.
@@ -62,7 +60,6 @@ Finally the MicrophoneArray class consist of an array of microphone locations to
 
 \section{What is TensorFlow?}
 \hspace*{0.6cm}
-\todo{references!}
 As they say on their website, TensorFlow is an``open source software library for high performance numerical computatio". We followed a TensorFlow tutorial called "Simple Audio Recognition" to create the neural networks we used during the all project (we are going to explain how it was created in 2.1). We have also reimplemented some of their functions to be able to label sounds we have modified through processing (see~\ref{sec:label_file}).
 \chapter{Theoretical knowledge}
 \section{Training the Neural Network}
@@ -233,6 +230,7 @@ The user needs to choose his label file, his graph file. In our example, he can 
 Here destination represents the directory in which the file to label is kept, labels\_file the label file, graph\_file the graph obtained from TensorFlow and finally word is the sound you except to obtain with this wav file.
 
 \section{How to synthesize noisy signals}
+\label{sec:synth}
 \hspace*{0.6cm}
 Now we will learn how to synthesize noisy signals in \textit{pyroomacoustics}. First of all we have implemented, in utils, two function to create noisy signal:
 \begin{enumerate}
@@ -293,97 +291,81 @@ You can see an example of how to use this function in \textit{pyroomacoustics}. 
 We have implemented one algorithm ourself in this project, the Single Noise Channel Removal (SCNR). The Delay and Sum (DAS) was already implemented in the package with lots of other beamforming algorithm far more efficient that we haven't used.\\
 You can see how we implemented it in figure 3.8 however we will explain how we did it.\\
 First of all we create an STFT object that allow us to compute short time Fourier transform and to use it in an easy and efficient way. We prepare also an array that will contain all of our processed audio at the end.
-Then we implement the algorithm that we run for each SNR values given by the user in this case (example called ``analyse\_improvement\_of\_single\_noise\_channel\_removal" in \textit{pyroomacoustics}). We set a counter n to 0 at the start of the algorithm. It tells us in which chunk of the STFT we are at a given moment. After that, we enter in the while loop where we use the STFT object to our advantage. With it we can compute easily the STFT of our input signal (a noisy signal). Then we fill our matrix containing all the previous signal's power estimation and we select its minimum value as our noise's power estimation. Having this estimation we can now compute the value of our filter, called mask in the figure, using the formula (2.6) (see~\ref{sec:SCNR}). Finally we have to update our matrix containing the powers and our counter n before repeating the actions above.
-
-\begin{figure}
+Then we implement the algorithm that we run for each SNR values given by the user in this case (example called ``analyse\_improvement\_of\_single\_noise\_channel\_removal" in \textit{pyroomacoustics}). We set a counter n to 0 at the start of the algorithm. It tells us in which chunk of the STFT we are at a given moment. After that, we enter in the while loop where we use the STFT object to our advantage. With it we can compute easily the STFT of our input signal (a noisy signal). Then we fill our matrix containing all the previous signal's power estimation and we select its minimum value as our noise's power estimation. Having this estimation we can now compute the value of our filter, called mask in the figure, using the formula (2.6) (see~\ref{sec:SCNR}). Finally we have to update our matrix containing the powers and our counter n before repeating the actions above.\
+\begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\linewidth]{rapport11}
 	\caption{SCNR algorithm implemented in \textit{pyroomacoustics}}
-	\label{fig:rapport11}
-\end{figure}
+	\label{fig:rapport14}
+\end{figure}\\
+\hspace*{0.6cm}
+Even though we have not implemented the algorithm itself, we have used the DAS algorithm in a really specific way as you can see in figure 3.9.\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\linewidth]{rapport14}
+	\caption{how to create beamformed signals (utils package)}
+	\label{fig:rapport13}
+\end{figure}\\
+Indeed we create two rooms, one containing the signal and the other one noise. In these room, we have a circular array of microphone plus one placed at the centre of this circle. We simulate these two rooms before applying DAS on both of their output (since this algorithm is linear we can do so). Then we normalize our beamformed noise to be able to control the SNR ourself. To do so we use the norm of the not beamformed noisy signal at the centre microphone in the noise's room. Then we create our SNR factor using the norm of the not beamformed signal at the centre microphone in the signal's room. Finally we compute our noisy signal as before (see~\ref{sec:synth}).
+
 
 \chapter{Results}
 \hspace*{0.6cm}
 In this section we will look at the performance of the two algorithms when we try to labelled processed sound. First we will talk about the SNCR and then about the DAS.
 \section{Analyse improvement of Single Noise Channel Removal}
 \hspace*{0.6cm}
-We first tried the SNCR algorithm in a script called:\\ ``analyze\_improvement\_of\_single\_noise\_channel\_removal\_fulldata" avaible in \textit{pyroomacoustics}. We ran it for subset of size 25 in the GoogleSpeechCommands dataset and for all the word that the TenserFlow neural network can recognize. This means we have created 1750 samples per word and 25 samples per SNR for a given word.\\
-We obtained the following result:
+We first tried the SNCR algorithm in a script called:\\ ``analyze\_improvement\_of\_single\_noise\_channel\_removal\_fulldata" available in \textit{pyroomacoustics}. We ran it for subset of size 25 in the GoogleSpeechCommands dataset and for all the word that the TenserFlow neural network can recognize. This means we have created 1750 samples per word and 25 samples per SNR for a given word. We obtained the following result:\\
 \begin{figure}[h!]
 	\centering
-	\begin{subfigure}{.32\textwidth}
+	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{rapport_no_single_noise_channel_removal}
+		\includegraphics[width=0.9\linewidth]{rapport_no_single_noise_channel_removal}
 		\caption{classification of the word no}
 		\label{fig:sub3}
 	\end{subfigure}%
-	\begin{subfigure}{.32\textwidth}
+	\begin{subfigure}{.5\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{rapport_stop_single_noise_channel_removal}
-		\caption{classification of the word stop}
-		\label{fig:sub4}
-	\end{subfigure}
-	\begin{subfigure}{.32\textwidth}
-		\centering
-		\includegraphics[width=1.2\linewidth]{rapport_yes_single_noise_channel_removal}
+		\includegraphics[width=0.9\linewidth]{rapport_yes_single_noise_channel_removal}
 		\caption{classification of the word yes}
 		\label{fig:sub5}
 	\end{subfigure}
 
 	\caption{classification comparison between the original noisy signal and a processed version of it using SNCR for samples of size 25}
 	\label{fig:rapport12}
-\end{figure}
+\end{figure}\\
 We can see in the case of the word ``no" that the algorithm improved the recognition for low SNR (SNR that are the most plausible in real life). For example at a SNR of 10dB we have an improvement of 23$\%$ for the classification which is huge (we go from 25$\%$ of correct recognition by the model to 48$\%$). We can also see that the recognition is always higher when we are using a processed signal.
-In the case of the word ``stop" we can make the same conclusion. At a SNR of 10dB we have an improvement of 19$\%$ for the classification (we go from 23$\%$ of correct recognition by the model to 42$\%$).
-The result of this test is even more impressive when we are working with the word ``yes" since we have an improvement of the classification of 29$\%$ at a SNR of 10dB (we go from 23$\%$ of correct recognition by the model to 52$\%$).
-We can conclude that the SNCR is a good algorithm for cleaning the data before giving it to a classifier. The improvement for low SNR are always close or above 20$\%$. But we can't say this is perfect. Even if the algorithm is quick, we can see that we don't achieve more that 50$\%$ of correctness in a majority of the case  for low SNR. This is not that good if we want for example to use this algorithm for a vocal recognition system.
+The result of this test is even more impressive when we are working with the word ``yes" since we have an improvement of the classification of 29$\%$ at a SNR of 10dB (we go from 23$\%$ of correct recognition by the model to 52$\%$).\\
+We can conclude that the SNCR is a good algorithm for cleaning the data before giving it to a classifier. The improvement for low SNR are always close or above 20$\%$. But we can't say this is perfect. Even if the algorithm is quick, we can see that we don't achieve more that 50$\%$ of correctness in a majority of the case  for low SNR. This is not that good if we want  to use this algorithm for a vocal recognition system.
 \section{Analyse improvement of Beamforming}
+\hspace*{0.6cm}
+Now we will look at the efficiency of our DAS algorithm. We use the script ``analyze\_improvement\_of\_beamforming\_fulldata" available in \textit{pyroomacoustics}. We ran it for subset of size 25 in the GoogleSpeechCommands dataset and for all the word that the TenserFlow neural network can recognize. This means we have created 1750 samples per word and 25 samples per SNR for a given word. We obtained the following result:\\
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{rapport_beamforming_no.png}
+		\caption{classification of the word no}
+		\label{fig:sub4}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{rapport_beamforming_yes.png}
+		\caption{classification of the word yes}
+		\label{fig:sub6}
+	\end{subfigure}
+	
+	\caption{classification comparison between the original noisy signal and a processed version of it using DAS for samples of size 25}
+	\label{fig:rapport15}
+\end{figure}\\
+In the case of the word ``no" we can see that the algorithm improved a lot the recognition for low SNR. At 0dB we have an improvement of 30$\%$ for the classification. This is even better than the improvement of SNCR at higher SNR! In this case we go from 10$\%$ of correct recognition by the model to 48$\%$ (nearly 50$\%$). Also the processed signal is always better recognize by the model. We have even better result when we are working with the word ``yes". We have in this case we have an improvement of 58$\%$ of the classification at a SNR of 10dB (we go from 10$\%$ of correct recognition by the model to 68$\%$).\\
+Now we can say that the DAS is an even better algorithm than the SNCR for cleaning the data before giving it to a classifier. The improvement at low SNR seems to be higher than 30$\%$ in general. One more time this algorithm is not perfect (what we want is more than 50$\%$ of good recognition at low SNR). But seeing its performance and knowing that DAS is the simplest form of Beamforming, we could say that beamforming seemed to be one solution to improve efficiently the vocal recognition of a system.
 \chapter{Conclusion}
 \section{Where are we now?}
 \hspace*{0.6cm}
-At the end of this project we were able to add a wrapper to Google's Speech Commands Dataset, to add utilities for augmenting  datasets and to test the efficiency of processing algorithm for improving the recognition's quality of a system. We have seen that SNCR is working quite well for what we are doing right now but we can surely do much better (but we will talk about this at the end).\todo{beamforming}\\ 
+At the end of this project we were able to add a wrapper to Google's Speech Commands Dataset, to add utilities for augmenting  datasets and to test the efficiency of processing algorithm for improving the recognition's quality of a system. We have seen that SNCR is working quite well for what we are doing right now but we can surely do much better (but we will talk about this at the end). DAS seems to be far better but it also perfectible (for example by using more advanced version of beamforming to process the audio inputs).
 All the scripts we have done are now available on the GitHub of \textit{pyroomacoustics} at the address \url{https://github.com/LCAV/pyroomacoustics}. 
 
 \section{What's next?}
 In the future and for the improvement of the \textit{pyroomacoustics} library, other students could test and implement other signal processing algorithm (for example just test the other beamforming algorithms already available in the package). They could also create new wrapper for other datasets. Then they could also create a new dataset from scratch for \textit{pyroomacoustics} which could help user to test their algorithms in the best condition possible (also it could be quite fun to record sound). Finally, they could try to find other machine learning model with better accuracy to improve what we have right now in \textit{pyroomacoustics}.
-\chapter{Bibliography}
-1) arXiv:1710.04196v1 [cs.SD],
-	Robin Scheibler, Eric Bezzam,
-		Ivan Dokmanic, \textit{"Pyroomacoustics: a python package for audio room simulation and array processing algorithms"},
-	Ecole Polytechnique Fédérale de Lausanne (EPFL),
-		University of Illinois Urbana-Champaign, USA,
-	11 Oct 2017
-\\
-\\
-2) TensorFlow,
-	\textit{Simple Audio Recognition},
-	13 January 2018,
-	\url{https://www.tensorflow.org/versions/master/tutorials/audio_recognition}
-\\
-\\
-3) Pete Warden, Software Engineer, Google Brain Team, 
-   Google AI Blog,
-   \textit{Launching the Speech Command Dataset}
-   24 August 2017
-   \url{https://ai.googleblog.com/2017/08/launching-speech-commands-dataset.html}
-\\
-\\
-4) Jørgen Grythe, 
-	\textit{Array gain and reduction of self-noise}, 
-	Norsonic AS, Oslo, Norway,
-	2016
-\\
-\\
-5) Christof Faller and Dirk Schröder,
-	\textit{Audio Signal Processing and Virtual Acoustics},
-	9 September 2015,
-\\
-\\
-6) 10.1109/ICASSP.2015.7178030,
-	Robin Scheibler, Ivan Dokmanic, and Martin Vetterli, 
-	\textit{Raking Echoes in the time domain }, 
-	School of Computer and Communication Sciences
-	Ecole Poly technique Federale de Lausanne (EPFL), CH-IOI5 Lausanne, Switzerland,
-	2015
 
 \end{document}
