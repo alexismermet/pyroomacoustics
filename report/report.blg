@@ -1,5 +1,9 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: report.aux
-I found no \citation commands---while reading file report.aux
-I found no \bibdata command---while reading file report.aux
-I found no \bibstyle command---while reading file report.aux
-(There were 3 error messages)
+[0] Config.pm:340> INFO - This is Biber 2.4
+[0] Config.pm:343> INFO - Logfile is 'report.blg'
+[68] biber-darwin:287> INFO - === Thu Jun  7, 2018, 15:54:18
+[93] Biber.pm:347> INFO - Reading 'report.bcf'
+[183] Biber.pm:741> INFO - Found 0 citekeys in bib section 0
+[183] Utils.pm:147> WARN - The file 'report.bcf' does not contain any citations!
+[195] bbl.pm:519> INFO - Writing 'report.bbl' with encoding 'latin1'
+[195] bbl.pm:615> INFO - Output to report.bbl
+[195] Biber.pm:108> INFO - WARNINGS: 1
