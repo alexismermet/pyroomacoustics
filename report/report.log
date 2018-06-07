@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.5.30)  7 JUN 2018 19:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.5.30)  7 JUN 2018 19:46
 entering extended mode
 **./report.tex
 (report.tex
@@ -1057,12 +1057,12 @@ Package pdftex.def Info: rapport4.png  used on input line 157.
 (pdftex.def)             Requested size: 251.9989pt x 147.29208pt.
  [7 <./rapport4.png>] [8]
 Chapter 3.
-<Rapport5.png, id=232, 367.67363pt x 31.01587pt>
+<Rapport5.png, id=235, 367.67363pt x 31.01587pt>
 File: Rapport5.png Graphic file (type png)
 <use Rapport5.png>
 Package pdftex.def Info: Rapport5.png  used on input line 201.
 (pdftex.def)             Requested size: 341.9989pt x 28.85106pt.
-<Rapport6.png, id=233, 239.39438pt x 18.36862pt>
+<Rapport6.png, id=236, 239.39438pt x 18.36862pt>
 File: Rapport6.png Graphic file (type png)
 <use Rapport6.png>
 Package pdftex.def Info: Rapport6.png  used on input line 208.
@@ -1070,7 +1070,7 @@ Package pdftex.def Info: Rapport6.png  used on input line 208.
 [9
 
  <./Rapport5.png>]
-<Rapport7.png, id=246, 139.42087pt x 15.6585pt>
+<Rapport7.png, id=249, 139.42087pt x 15.6585pt>
 File: Rapport7.png Graphic file (type png)
 <use Rapport7.png>
 Package pdftex.def Info: Rapport7.png  used on input line 215.
@@ -1082,7 +1082,7 @@ Overfull \hbox (4.88918pt too wide) in paragraph at lines 225--228
 bel[] 
  []
 
-<Rapport8.png, id=249, 438.73912pt x 31.61812pt>
+<Rapport8.png, id=252, 438.73912pt x 31.61812pt>
 File: Rapport8.png Graphic file (type png)
 <use Rapport8.png>
 Package pdftex.def Info: Rapport8.png  used on input line 239.
@@ -1096,23 +1096,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 235--243
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [10 <./Rapport6.png> <./Rapport7.png>]
-<Rapport9.png, id=266, 743.1765pt x 20.4765pt>
+<Rapport9.png, id=269, 743.1765pt x 20.4765pt>
 File: Rapport9.png Graphic file (type png)
 <use Rapport9.png>
 Package pdftex.def Info: Rapport9.png  used on input line 260.
 (pdftex.def)             Requested size: 360.0pt x 9.9189pt.
-<Rapport10.png, id=267, 515.526pt x 105.09262pt>
+<Rapport10.png, id=270, 515.526pt x 105.09262pt>
 File: Rapport10.png Graphic file (type png)
 <use Rapport10.png>
 Package pdftex.def Info: Rapport10.png  used on input line 267.
 (pdftex.def)             Requested size: 251.9989pt x 51.37074pt.
  [11 <./Rapport8.png> <./Rapport9.png> <./Rapport10.png>]
-<rapport12.png, id=281, 462.528pt x 346.896pt>
+<rapport12.png, id=284, 462.528pt x 346.896pt>
 File: rapport12.png Graphic file (type png)
 <use rapport12.png>
 Package pdftex.def Info: rapport12.png  used on input line 289.
 (pdftex.def)             Requested size: 163.80066pt x 122.84987pt.
-<rapport13.png, id=282, 462.528pt x 346.896pt>
+<rapport13.png, id=285, 462.528pt x 346.896pt>
 File: rapport13.png Graphic file (type png)
 <use rapport13.png>
 Package pdftex.def Info: rapport13.png  used on input line 295.
@@ -1123,7 +1123,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 304--306
  []
 
 [12 <./rapport12.png> <./rapport13.png>]
-<rapport11.png, id=298, 668.4975pt x 515.22487pt>
+<rapport11.png, id=301, 668.4975pt x 515.22487pt>
 File: rapport11.png Graphic file (type png)
 <use rapport11.png>
 Package pdftex.def Info: rapport11.png  used on input line 313.
@@ -1144,20 +1144,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 321--323
 
  []
 
-<rapport14.png, id=308, 598.33537pt x 213.49762pt>
+<rapport14.png, id=311, 598.33537pt x 213.49762pt>
 File: rapport14.png Graphic file (type png)
 <use rapport14.png>
 Package pdftex.def Info: rapport14.png  used on input line 352.
 (pdftex.def)             Requested size: 251.9989pt x 89.91597pt.
 [14 <./rapport14.png>]
 Chapter 4.
-<rapport_no_single_noise_channel_removal.png, id=317, 462.528pt x 346.896pt>
+<rapport_no_single_noise_channel_removal.png, id=320, 462.528pt x 346.896pt>
 File: rapport_no_single_noise_channel_removal.png Graphic file (type png)
 <use rapport_no_single_noise_channel_removal.png>
 Package pdftex.def Info: rapport_no_single_noise_channel_removal.png  used on i
 nput line 371.
 (pdftex.def)             Requested size: 161.9989pt x 121.5001pt.
-<rapport_yes_single_noise_channel_removal.png, id=318, 462.528pt x 346.896pt>
+<rapport_yes_single_noise_channel_removal.png, id=321, 462.528pt x 346.896pt>
 File: rapport_yes_single_noise_channel_removal.png Graphic file (type png)
 <use rapport_yes_single_noise_channel_removal.png>
 Package pdftex.def Info: rapport_yes_single_noise_channel_removal.png  used on 
@@ -1173,12 +1173,12 @@ fulldata \OT1/cmr/m/n/10.95 avail-
 
  <./rapport_no_single_noise_channel_removal.png> <./rapport_yes_single_noise_ch
 annel_removal.png>]
-<rapport_beamforming_no.png, id=326, 462.528pt x 346.896pt>
+<rapport_beamforming_no.png, id=329, 462.528pt x 346.896pt>
 File: rapport_beamforming_no.png Graphic file (type png)
 <use rapport_beamforming_no.png>
 Package pdftex.def Info: rapport_beamforming_no.png  used on input line 395.
 (pdftex.def)             Requested size: 161.9989pt x 121.5001pt.
-<rapport_beamforming_yes.png, id=327, 462.528pt x 346.896pt>
+<rapport_beamforming_yes.png, id=330, 462.528pt x 346.896pt>
 File: rapport_beamforming_yes.png Graphic file (type png)
 <use rapport_beamforming_yes.png>
 Package pdftex.def Info: rapport_beamforming_yes.png  used on input line 401.
@@ -1224,7 +1224,7 @@ Here is how much of TeX's memory you used:
  27607 multiletter control sequences out of 15000+200000
  14898 words of font info for 55 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,13n,77p,940b,1243s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,13n,77p,940b,1500s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/Alexis/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmbx10.pfb><C:/Users/Alexis/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
 public/amsfonts/cm/cmbx12.pfb><C:/Users/Alexis/AppData/Local/Programs/MiKTeX 2.
@@ -1245,9 +1245,9 @@ ype1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Alexis/AppData/Local/Programs/MiKTe
 X 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Users/Alexis/AppData/Local/
 Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Alexis/
 AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on report.pdf (20 pages, 1066297 bytes).
+Output written on report.pdf (20 pages, 1066512 bytes).
 PDF statistics:
- 441 PDF objects out of 1000 (max. 8388607)
+ 443 PDF objects out of 1000 (max. 8388607)
  110 named destinations out of 1000 (max. 500000)
  298 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1982,8 +1982,10 @@
     <bcf:citekey order="6">googlespeech</bcf:citekey>
     <bcf:citekey order="7">SNR</bcf:citekey>
     <bcf:citekey order="8">SNCR</bcf:citekey>
-    <bcf:citekey order="9">BEAM</bcf:citekey>
-    <bcf:citekey order="10">sounddevice</bcf:citekey>
+    <bcf:citekey order="9">SCNR</bcf:citekey>
+    <bcf:citekey order="10">SCNR</bcf:citekey>
+    <bcf:citekey order="11">BEAM</bcf:citekey>
+    <bcf:citekey order="12">sounddevice</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
