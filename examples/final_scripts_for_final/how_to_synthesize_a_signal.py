@@ -73,17 +73,15 @@ if __name__ == '__main__':
 	min_val = -80
 	max_val = 0
 	plt.figure()
-	plt.subplot(2,1,1)
 
 	# plot the original signal
-	plt.specgram(audio_anechoic.astype('float32'), NFFT=256, Fs=fs_s, vmin=min_val, vmax=max_val)
+	plt.specgram(audio_anechoic/np.linalg.norm(audio_anechoic).astype('float32'), NFFT=256, Fs=fs_s, vmin=min_val, vmax=max_val)
 	plt.title('Original Speech signal')
 	
 	# plot the new signals
 	for i,snr in enumerate(snr_vals):
 		noisy = np.average(noisy_signal[i],axis=0).astype('float32')
 		plt.figure()
-		plt.subplot(2,1,1)
 		plt.specgram(noisy, NFFT=256, Fs=fs_s, vmin=min_val, vmax=max_val)
 		plt.title('new samples at snr values %d' %(snr))
 

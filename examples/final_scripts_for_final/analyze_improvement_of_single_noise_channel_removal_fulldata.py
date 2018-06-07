@@ -87,7 +87,7 @@ if __name__ == '__main__':
 	# position of the noise source
 	noise_source = [4,2,1.5]
 	# desired basis words. Here we have all the possible words in our model
-	desired_word = ['stop']
+	desired_word = ['up']
 	# subest desired per word
 	sub = 25
 	#choose your label file
