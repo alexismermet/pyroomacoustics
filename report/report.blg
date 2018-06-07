@@ -1,9 +1,18 @@
-[0] Config.pm:340> INFO - This is Biber 2.4
-[0] Config.pm:343> INFO - Logfile is 'report.blg'
-[68] biber-darwin:287> INFO - === Thu Jun  7, 2018, 15:54:18
-[93] Biber.pm:347> INFO - Reading 'report.bcf'
-[183] Biber.pm:741> INFO - Found 0 citekeys in bib section 0
-[183] Utils.pm:147> WARN - The file 'report.bcf' does not contain any citations!
-[195] bbl.pm:519> INFO - Writing 'report.bbl' with encoding 'latin1'
-[195] bbl.pm:615> INFO - Output to report.bbl
-[195] Biber.pm:108> INFO - WARNINGS: 1
+[0] Config.pm:302> INFO - This is Biber 2.11
+[0] Config.pm:305> INFO - Logfile is 'report.blg'
+[28] biber-MSWIN64:313> INFO - === 
+[57] Biber.pm:371> INFO - Reading 'report.bcf'
+[146] Biber.pm:857> INFO - Found 7 citekeys in bib section 0
+[161] Biber.pm:3976> INFO - Processing section 0
+[175] Biber.pm:4136> INFO - Looking for bibtex format file 'biblio.bib' for section 0
+[179] bibtex.pm:1500> INFO - LaTeX decoding ...
+[189] bibtex.pm:1316> INFO - Found BibTeX data source 'biblio.bib'
+[223] Utils.pm:193> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
+[223] Utils.pm:193> WARN - BibTeX subsystem: author, warning: comma(s) at end of name (removing)
+[235] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[235] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[235] Biber.pm:3804> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
+[235] Biber.pm:3810> INFO - No sort tailoring available for locale 'en-US'
+[245] bbl.pm:617> INFO - Writing 'report.bbl' with encoding 'latin1'
+[249] bbl.pm:720> INFO - Output to report.bbl
+[253] Biber.pm:110> INFO - WARNINGS: 2

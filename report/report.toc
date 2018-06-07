@@ -14,13 +14,13 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {2.2}The GoogleSpeechCommands Dataset: Basic informations}{5}{section.2.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {2.3}Signal-to-noise ratio, beamforming}{6}{section.2.3}
+\contentsline {section}{\numberline {2.3}Signal-to-noise ratio}{6}{section.2.3}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {2.4}Algorithms}{6}{section.2.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.1}Single Noise Channel Removal (SCNR)}{7}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.1}Single Noise Channel Removal (SNCR)}{6}{subsection.2.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {2.4.2}Beamforming: Delay and Sum}{7}{subsection.2.4.2}
+\contentsline {subsection}{\numberline {2.4.2}Beamforming: Delay and Sum}{8}{subsection.2.4.2}
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {3}Implementation}{9}{chapter.3}
 \defcounter {refsection}{0}\relax 
@@ -30,11 +30,11 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.3}How to synthesize noisy signals}{11}{section.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.4}Testing the performance of the algorithms}{12}{section.3.4}
+\contentsline {section}{\numberline {3.4}Testing the performance of the algorithms}{13}{section.3.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.4.1}SCNR}{13}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.1}SNCR}{13}{subsection.3.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.4.2}DAS beamforming}{13}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.2}DAS beamforming}{14}{subsection.3.4.2}
 \defcounter {refsection}{0}\relax 
 \contentsline {chapter}{\numberline {4}Results}{15}{chapter.4}
 \defcounter {refsection}{0}\relax 
@@ -47,3 +47,5 @@
 \contentsline {section}{\numberline {5.1}Where are we now?}{18}{section.5.1}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {5.2}What's next?}{18}{section.5.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Bibliography}{19}{chapter*.17}

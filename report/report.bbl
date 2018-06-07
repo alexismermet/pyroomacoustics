@@ -1,5 +1,5 @@
 % $ biblatex auxiliary file $
-% $ biblatex bbl format version 2.6 $
+% $ biblatex bbl format version 2.9 $
 % Do not modify the above lines!
 %
 % This is an auxiliary file used by the 'biblatex' package.
@@ -16,5 +16,217 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{pyroom}{report}{}
+      \name{author}{1}{}{%
+        {{hash=6904954c1c2a2cc165df7938df5fd956}{%
+           family={Robin\bibnamedelima Scheibler},
+           familyi={R\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Ivan\bibnamedelima Dokmanic},
+           giveni={I\bibinitperiod\bibinitdelim D\bibinitperiod},
+           suffix={Eric\bibnamedelima Bezzam},
+           suffixi={E\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Ecole Polytechnique F{é}d{é}rale de Lausanne (EPFL), University of Illinois Urbana-Champaign, USA,}%
+      }
+      \strng{namehash}{6904954c1c2a2cc165df7938df5fd956}
+      \strng{fullhash}{6904954c1c2a2cc165df7938df5fd956}
+      \strng{bibnamehash}{6904954c1c2a2cc165df7938df5fd956}
+      \strng{authorbibnamehash}{6904954c1c2a2cc165df7938df5fd956}
+      \strng{authornamehash}{6904954c1c2a2cc165df7938df5fd956}
+      \strng{authorfullhash}{6904954c1c2a2cc165df7938df5fd956}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Pyroomacoustics: a python package for audio room simulation and array processing algorithms}
+      \field{type}{report}
+      \field{year}{2017}
+      \field{dateera}{ce}
+    \endentry
+    \entry{googlespeech}{online}{}
+      \name{author}{1}{}{%
+        {{hash=308fbcd667a6bee4f912ee2c5dda1c05}{%
+           family={Pete\bibnamedelima Warden},
+           familyi={P\bibinitperiod\bibinitdelim W\bibinitperiod},
+           given={Google\bibnamedelimb Brain\bibnamedelima Team},
+           giveni={G\bibinitperiod\bibinitdelim B\bibinitperiod\bibinitdelim T\bibinitperiod},
+           suffix={Software\bibnamedelima Engineer},
+           suffixi={S\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=2b6e461725ff9b08ed896e5be093371b}{%
+           family={Blog},
+           familyi={B\bibinitperiod},
+           given={Google\bibnamedelima AI},
+           giveni={G\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{fullhash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{bibnamehash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{authorbibnamehash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{authornamehash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{authorfullhash}{308fbcd667a6bee4f912ee2c5dda1c05}
+      \strng{editorbibnamehash}{2b6e461725ff9b08ed896e5be093371b}
+      \strng{editornamehash}{2b6e461725ff9b08ed896e5be093371b}
+      \strng{editorfullhash}{2b6e461725ff9b08ed896e5be093371b}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Launching the Speech Command Dataset}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://ai.googleblog.com/2017/08/launching-speech-commands-dataset.html
+      \endverb
+      \verb{url}
+      \verb https://ai.googleblog.com/2017/08/launching-speech-commands-dataset.html
+      \endverb
+    \endentry
+    \entry{TensorFlow}{online}{}
+      \name{editor}{1}{}{%
+        {{hash=074dd699710da0ec1eb45f13b31788e3}{%
+           family={TensorFlow},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{074dd699710da0ec1eb45f13b31788e3}
+      \strng{fullhash}{074dd699710da0ec1eb45f13b31788e3}
+      \strng{bibnamehash}{074dd699710da0ec1eb45f13b31788e3}
+      \strng{editorbibnamehash}{074dd699710da0ec1eb45f13b31788e3}
+      \strng{editornamehash}{074dd699710da0ec1eb45f13b31788e3}
+      \strng{editorfullhash}{074dd699710da0ec1eb45f13b31788e3}
+      \field{sortinit}{4}
+      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{Simple Audio Recognition}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.tensorflow.org/versions/master/tutorials/audio_recognition
+      \endverb
+      \verb{url}
+      \verb https://www.tensorflow.org/versions/master/tutorials/audio_recognition
+      \endverb
+    \endentry
+    \entry{SNR}{report}{}
+      \name{author}{1}{}{%
+        {{hash=6a6fbf07668988939513d8234816dd32}{%
+           family={Grythe},
+           familyi={G\bibinitperiod},
+           given={J{ø}rgen},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Norsonic AS, Oslo, Norway}%
+      }
+      \strng{namehash}{6a6fbf07668988939513d8234816dd32}
+      \strng{fullhash}{6a6fbf07668988939513d8234816dd32}
+      \strng{bibnamehash}{6a6fbf07668988939513d8234816dd32}
+      \strng{authorbibnamehash}{6a6fbf07668988939513d8234816dd32}
+      \strng{authornamehash}{6a6fbf07668988939513d8234816dd32}
+      \strng{authorfullhash}{6a6fbf07668988939513d8234816dd32}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Array gain and reduction of self-noise}
+      \field{type}{report}
+      \field{year}{2016}
+      \field{dateera}{ce}
+    \endentry
+    \entry{SCNR}{book}{}
+      \name{author}{2}{}{%
+        {{hash=70b772a277835e273d666c9de3983674}{%
+           family={Faller},
+           familyi={F\bibinitperiod},
+           given={Christof},
+           giveni={C\bibinitperiod}}}%
+        {{hash=a2ed9afca098791ebe7b26eb28787ade}{%
+           family={Schr{ö}der},
+           familyi={S\bibinitperiod},
+           given={Dirk},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \strng{fullhash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \strng{bibnamehash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \strng{authorbibnamehash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \strng{authornamehash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \strng{authorfullhash}{a5a864d2c8eddf071874b4bc2c0cca00}
+      \field{sortinit}{8}
+      \field{sortinithash}{07edf88d4ea82509b9c4b4d13f41c452}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Audio Signal Processing and Virtual Acoustics}
+      \field{year}{2015}
+      \field{dateera}{ce}
+    \endentry
+    \entry{BEAM}{report}{}
+      \name{author}{2}{}{%
+        {{hash=751654c378fce45f7f3b41d7050e2680}{%
+           family={Robin\bibnamedelima Scheibler},
+           familyi={R\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Ivan\bibnamedelima Dokmanic},
+           giveni={I\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=75e722dac26b8548b09550c9c47606ab}{%
+           family={Vetterli},
+           familyi={V\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {School of Computer}%
+        {Communication Sciences Ecole Polytechnique F{é}d{é}rale de Lausanne (EPFL), CH-IOI5 Lausanne, Switzerland}%
+      }
+      \strng{namehash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \strng{fullhash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \strng{bibnamehash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \strng{authorbibnamehash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \strng{authornamehash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \strng{authorfullhash}{e7d8bd38244c8879d0f205e5c3565fdf}
+      \field{sortinit}{9}
+      \field{sortinithash}{1dd72ab054147731c9d824b49aba0534}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Raking Echoes in the time domain}
+      \field{type}{report}
+      \field{year}{2015}
+      \field{dateera}{ce}
+    \endentry
+    \entry{sounddevice}{online}{}
+      \name{author}{1}{}{%
+        {{hash=d747d219bd1d7019668b2219cf5f8bb2}{%
+           family={Geier},
+           familyi={G\bibinitperiod},
+           given={Matthias},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \strng{fullhash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \strng{bibnamehash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \strng{authorbibnamehash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \strng{authornamehash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \strng{authorfullhash}{d747d219bd1d7019668b2219cf5f8bb2}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Play and Record Sound with Python}
+      \field{year}{2018}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://python-sounddevice.readthedocs.io/en/0.3.11/
+      \endverb
+      \verb{url}
+      \verb https://python-sounddevice.readthedocs.io/en/0.3.11/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 
