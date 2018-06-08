@@ -325,9 +325,12 @@ Even though we have not implemented the algorithm itself, we have used the DAS a
 	\centering
 	\begin{tikzpicture}[thick,scale=0.6, every node/.style={scale=0.6}]
 	\draw  (-5.5,4.5) rectangle (-1.5,2.5) node (v1) {};
-	\node at (-3.5,3.5) {Create rooms};
+	\node at (-3.5,3.5) {create identical rooms};
+	\node at (-3.5,3) {for signal and noise};
 	\draw [-latex] (0.5,4.5) rectangle (4.5,2.5);
-	\node at (2.5,3.5) {DAS};
+	\node at (2.5,4.0) {apply same DAS};
+	\node at (2.5,3.5) {Beamformer to};
+	\node at (2.5,.0) {each room};
 	\draw [-latex] (6.5,4.5) rectangle (10.5,2.5);
 	\node at (8.5,3.5) {Create noisy signals };
 	\node at (8.5,3) {for each SNR value};
